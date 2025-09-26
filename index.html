@@ -219,6 +219,26 @@
   </div>
 </section>
 <script src="script.js"></script>
+<!-- Floating toggle button -->
+<div class="float-btn" id="floatToggle" title="Open chat">
+  <div class="icon">💬</div>
+</div>
+
+<!-- Floating chat window (hidden initially) -->
+<div class="floating-chat hidden" id="floatingChat">
+  <div class="topbar">
+    <div class="title">Assistant</div>
+    <div class="controls">
+      <button id="closeBtn" title="Close">×</button>
+    </div>
+  </div>
+  <div id="f-conversation"></div>
+  <div class="input-area">
+    <input type="text" id="f-prompt" placeholder="Ask me...">
+    <button id="f-send">Send</button>
+  </div>
+</div>
 
 </body>
+
 </html>
