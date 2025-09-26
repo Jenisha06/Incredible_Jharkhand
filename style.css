@@ -110,14 +110,14 @@
             border: 2px solid transparent;
         }
 
-        .multilingual-btn {
-            background: rgba(46, 125, 50, 0.1);
-            color: #2E7D32;
+        .sos-button {
+            background-color: red;
+            color: white;
             margin-right: 1rem;
             border: 1px solid rgba(46, 125, 50, 0.3);
         }
 
-        .multilingual-btn:hover {
+        .sos-button:hover {
             background: rgba(46, 125, 50, 0.2);
             transform: translateY(-2px);
             box-shadow: 0 8px 20px rgba(46, 125, 50, 0.2);
@@ -549,6 +549,7 @@
     }
 
    
+
 
 
 
