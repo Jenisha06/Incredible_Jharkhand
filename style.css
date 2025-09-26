@@ -118,7 +118,7 @@
         }
 
         .sos-button:hover {
-            background: rgba(46, 125, 50, 0.2);
+            background: red;
             transform: translateY(-2px);
             box-shadow: 0 8px 20px rgba(46, 125, 50, 0.2);
         }
@@ -549,6 +549,7 @@
     }
 
    
+
 
 
 
