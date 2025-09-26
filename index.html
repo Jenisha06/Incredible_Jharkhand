@@ -24,7 +24,39 @@
 
             </ul>
             <a href="#multilingual-btn" class="multilingual-btn">हिंदी</a>
-              <a href="sos-btn.html" class="sos-button">SOS alert</a>
+             <!-- Replace this -->
+<!-- <a href="sos-btn.html" class="sos-button">SOS alert</a> -->
+
+<!-- With this -->
+<button onclick="sendSOS()" class="sos-button">🚨 SOS Alert</button>
+
+<script>
+  function sendSOS() {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(function(position) {
+        let lat = position.coords.latitude;
+        let lon = position.coords.longitude;
+        let mapsLink = https://www.google.com/maps?q=${lat},${lon};
+        
+        // Emergency number (India common: 112)
+        let emergencyNumber = "112";
+        
+        // Message with location
+        let message = encodeURIComponent(🚨 SOS! I need help. My location: ${mapsLink});
+        
+        // Open SMS app on phone
+        window.location.href = sms:${emergencyNumber}?body=${message};
+      }, function() {
+        alert("Location not available. Sending SOS without location.");
+        let emergencyNumber = "112";
+        let message = encodeURIComponent("🚨 SOS! I need help. Location not available.");
+        window.location.href = sms:${emergencyNumber}?body=${message};
+      });
+    } else {
+      alert("Geolocation not supported on this device.");
+    }
+  }
+</script>
             <a href="#login-btn" class="login-btn" data-key="login">Login</a>
         </nav>
         <div class="header-content">
@@ -237,6 +269,7 @@
 </body>
 
 </html>
+
 
 
 
