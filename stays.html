@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hotels & Homestays | Smart Jharkhand Tourism</title>
+  <link rel="stylesheet" href="stays.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+</head>
+<body>
+
+  <!-- Hero Banner -->
+  <section class="hero">
+    <h1>Find Hotels & Homestays in Jharkhand</h1>
+    <p>Stay close to nature, culture, and tradition</p>
+  </section>
+
+  <!-- Filter Bar -->
+  <section class="filter-bar">
+    <input type="text" id="searchBar" placeholder="Search by name or location">
+    <select id="locationFilter">
+      <option value="">All Locations</option>
+      <option value="Ranchi">Ranchi</option>
+      <option value="Netarhat">Netarhat</option>
+      <option value="Deoghar">Deoghar</option>
+      <option value="Betla">Betla</option>
+    </select>
+    <select id="typeFilter">
+      <option value="">All Types</option>
+      <option value="Hotel">Hotel</option>
+      <option value="Homestay">Homestay</option>
+      <option value="Eco-Stay">Eco-Stay</option>
+      <option value="Lodge">Lodge</option>
+    </select>
+    <select id="priceFilter">
+      <option value="">Any Budget</option>
+      <option value="low">₹ (Below 1000)</option>
+      <option value="mid">₹₹ (1000 - 2000)</option>
+      <option value="high">₹₹₹ (2000+)</option>
+    </select>
+  </section>
+
+  <!-- Stay Listings -->
+  <section class="stay-listings">
+    <div class="stay-card" data-location="Ranchi" data-type="Hotel" data-price="high">
+      <img src="https://via.placeholder.com/300x200" alt="Hotel Ranchi Heights">
+      <h3>Hotel Ranchi Heights</h3>
+      <p>Ranchi · Hotel</p>
+      <p class="price">₹2500/night</p>
+      <button>View Details</button>
+      <button class="book-btn">Book Now</button>
+    </div>
+
+    <div class="stay-card" data-location="Netarhat" data-type="Eco-Stay" data-price="mid">
+      <img src="https://via.placeholder.com/300x200" alt="Netarhat Eco Homestay">
+      <h3>Netarhat Eco Homestay</h3>
+      <p>Netarhat · Eco-Stay</p>
+      <p class="price">₹1200/night</p>
+      <button>View Details</button>
+      <button class="book-btn">Book Now</button>
+    </div>
+
+    <div class="stay-card" data-location="Deoghar" data-type="Hotel" data-price="mid">
+      <img src="https://via.placeholder.com/300x200" alt="Deoghar Comfort Inn">
+      <h3>Deoghar Comfort Inn</h3>
+      <p>Deoghar · Hotel</p>
+      <p class="price">₹1800/night</p>
+      <button>View Details</button>
+      <button class="book-btn">Book Now</button>
+    </div>
+
+    <div class="stay-card" data-location="Betla" data-type="Homestay" data-price="low">
+      <img src="https://via.placeholder.com/300x200" alt="Tribal Village Homestay">
+      <h3>Tribal Village Homestay</h3>
+      <p>Betla · Homestay</p>
+      <p class="price">₹900/night</p>
+      <button>View Details</button>
+      <button class="book-btn">Book Now</button>
+    </div>
+  </section>
+
+  <script src="stays.js"></script>
+</body>
+</html>

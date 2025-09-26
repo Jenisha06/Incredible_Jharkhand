@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Incredible Jharkhand</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <header>
+        <nav>
+            <div class="logo">
+                <img src="logo.png" alt="Incredible Jharkhand Logo" />
+                <h1 >Incredible Jharkhand</h1>
+
+            </div>
+            <ul class="nav-links">
+                <li><a href="#Home" class="a-links" data-key="home">Home</a></li>
+                <li><a href="#ThingsToDo" class="a-links" >Things to do</a></li>
+   <li><a href="ai_planner/aiPlanner.html" class="a-links">AI Planner</a></li>
+                 <li><a href="#Guides" class="a-links" >Guides</a></li>
+                 <li><a href="#Map" class="a-links" >Map</a></li>
+            </ul>
+            <a href="#multilingual-btn" class="multilingual-btn">हिंदी</a>
+            <a href="#login-btn" class="login-btn" data-key="login">Login</a>
+        </nav>
+        <div class="header-content">
+           <video autoplay muted loop class="header-video">
+    <source src="jharkhand.mp4" type="video/mp4">
+    Your browser does not support the video tag.
+  </video>
+                <h2 data-key="hero-title">Discover the Hidden Gems of Jharkhand</h2>
+                <p data-key="hero-subtext">Explore the rich culture, stunning landscapes, and vibrant traditions of Jharkhand. Your adventure starts here!</p>
+                <a href="#explore-btn" class="explore-btn" data-key="explore">Explore Now</a>
+            
+
+        </div>
+    </header>
+    <section class="attractions" aria-labelledby="attractions-heading">
+      <div class="container">
+    <div class="section-head">
+      <div>
+        <h2 id="attractions-heading" data-key="attractions-title">Top Attractions in Jharkhand</h2>
+        <p class="section-sub" data-key="Handpicked destinations — quick access to must-visit places.">Handpicked destinations — quick access to must-visit places.</p>
+      </div>
+      <!-- optional small link -->
+      <div class="section-action">
+        <a class="section-sub" href="/destinations" aria-label="See all destinations">See all destinations →</a>
+      </div>
+    </div>
+
+    <div class="grid" role="list">
+      <!-- Card 1: Netarhat -->
+      <article class="card" role="listitem" aria-labelledby="netarhat-title">
+        <img src="nethratJharkhand.jpg" alt="Sunrise view at Netarhat, Jharkhand" loading="lazy">
+        <div class="card-body">
+          <h3 id="netarhat-title" class="card-title">Netarhat</h3>
+          <p class="card-desc">A tranquil hill station known for breathtaking sunrises, dense forests, and scenic viewpoints.</p>
+          <div class="card-cta">
+            <a class="btn btn-primary" href="/destinations/netarhat" aria-label="View more about Netarhat">View More</a>
+            <a class="btn btn-outline" href="/itinerary?place=Netarhat" aria-label="Plan trip to Netarhat">Plan Trip</a>
+          </div>
+        </div>
+      </article>
+
+      <!-- Card 2: Betla National Park -->
+      <article class="card" role="listitem" aria-labelledby="betla-title">
+        <img src="betlaNationalPark.jpeg" alt="Wildlife in Betla National Park" loading="lazy">
+        <div class="card-body">
+          <h3 id="betla-title" class="card-title">Betla National Park</h3>
+          <p class="card-desc">One of India's premiere wildlife reserves — safaris, rich biodiversity, and tribal culture nearby.</p>
+          <div class="card-cta">
+            <a class="btn btn-primary" href="/destinations/betla" aria-label="View more about Betla">View More</a>
+            <a class="btn btn-outline" href="/guides?place=Betla" aria-label="Find guides for Betla">Find Guide</a>
+          </div>
+        </div>
+      </article>
+
+      <!-- Card 3: Hundru Falls -->
+      <article class="card" role="listitem" aria-labelledby="hundru-title">
+        <img src="hundruFalls.jpg" alt="Hundru Falls cascading down rocky cliffs" loading="lazy">
+        <div class="card-body">
+          <h3 id="hundru-title" class="card-title">Hundru Falls</h3>
+          <p class="card-desc">A dramatic waterfall on the Subarnarekha River — perfect for nature lovers and photographers.</p>
+          <div class="card-cta">
+            <a class="btn btn-primary" href="/destinations/hundru-falls" aria-label="View more about Hundru Falls">View More</a>
+            <a class="btn btn-outline" href="/events?near=Hundru+Falls" aria-label="See events near Hundru Falls">Nearby Events</a>
+          </div>
+        </div>
+      </article>
+
+      <!-- Card 4: Deoghar -->
+      <article class="card" role="listitem" aria-labelledby="deoghar-title">
+        <img src="deoghar.jpg" alt="Deoghar temple, a major pilgrimage site" loading="lazy">
+        <div class="card-body">
+          <h3 id="deoghar-title" class="card-title">Deoghar</h3>
+          <p class="card-desc">A major pilgrimage destination with historic temples, bustling bazaars, and spiritual festivals.</p>
+          <div class="card-cta">
+            <a class="btn btn-primary" href="/destinations/deoghar" aria-label="View more about Deoghar">View More</a>
+            <a class="btn btn-outline" href="/homestays?near=Deoghar" aria-label="Find homestays in Deoghar">Find Stay</a>
+          </div>
+        </div>
+      </article>
+
+
+        <!-- Card 5: Patratu Valley -->
+      <article class="card" role="listitem" aria-labelledby="patratuValley-title">
+        <img src="patratuValley.webp" alt="Deoghar temple, a major pilgrimage site" loading="lazy">
+        <div class="card-body">
+          <h3 id="deoghar-title" class="card-title">Patratu Valley </h3>
+          <p class="card-desc">Stunning green valley with meadows, hills, and a reservoir.</p>
+          <div class="card-cta">
+            <a class="btn btn-primary" href="/destinations/deoghar" aria-label="View more about Deoghar">View More</a>
+            <a class="btn btn-outline" href="/guides?place=Betla" aria-label="Find guides for Betla">Find Guide</a>
+          </div>
+        </div>
+      </article>
+
+
+
+
+        <!-- Card 6:Rajrappa Temple -->
+      <article class="card" role="listitem" aria-labelledby="RajrappaTemple-title">
+        <img src="Rajrappa Temple.webp" alt="Rajrappa Temple, a major pilgrimage site" loading="lazy">
+        <div class="card-body">
+          <h3 id="deoghar-title" class="card-title">Rajrappa Temple</h3>
+          <p class="card-desc">A famous Shakti Peeth and confluence of rivers for spiritual seekers.</p>
+          <div class="card-cta">
+            <a class="btn btn-primary" href="/destinations/deoghar" aria-label="View more about Deoghar">View More</a>
+            <a class="btn btn-outline" href="/homestays?near=Deoghar" aria-label="Find homestays in Deoghar">Find Stay</a>
+          </div>
+        </div>
+      </article>
+
+
+
+        <!-- Card 7: Parasnath Hill -->
+      <article class="card" role="listitem" aria-labelledby="ParasnathHill-title">
+        <img src="Parasnath Hill.jpg" alt="Parasnath Hill temple, a major pilgrimage site" loading="lazy">
+        <div class="card-body">
+          <h3 id="deoghar-title" class="card-title">Parasnath Hill</h3>
+          <p class="card-desc">The highest peak in Jharkhand and an important Jain pilgrimage site.</p>
+          <div class="card-cta">
+            <a class="btn btn-primary" href="/destinations/ParasnathHill" aria-label="View more about Parasnath Hill">View More</a>
+            <a class="btn btn-outline" href="/homestays?near=Parasnath Hill" aria-label="Find homestays in Parasnath Hill">Find Stay</a>
+          </div>
+        </div>
+      </article>
+
+
+
+        <!-- Card 8: Hirni Falls -->
+      <article class="card" role="listitem" aria-labelledby="HirniFalls-title">
+        <img src="Hirni-Falls.jpg" alt="Hirni Falls temple, a major pilgrimage site" loading="lazy">
+        <div class="card-body">
+          <h3 id="Hirni Falls-title" class="card-title"> Hirni Falls</h3>
+          <p class="card-desc">Beautiful waterfall surrounded by dense forests, perfect for nature lovers.</p>
+          <div class="card-cta">
+            <a class="btn btn-primary" href="/destinations/deoghar" aria-label="View more about Deoghar">View More</a>
+            <a class="btn btn-outline" href="/homestays?near=Deoghar" aria-label="Find homestays in Deoghar">Find Stay</a>
+          </div>
+        </div>
+      </article>
+    </div>
+
+    <div class="view-all-wrap">
+      <a class="view-all" href="/destinations" aria-label="View all destinations in Jharkhand">View All Destinations</a>
+    </div>
+  </div>
+</section>
+
+<section class="why-jharkhand">
+  <h2>Why Visit Jharkhand?</h2>
+  <p class="subtitle">A land of nature, spirituality, and culture</p>
+
+  <div class="why-grid">
+    <!-- Card 1 -->
+    <div class="why-card">
+      <div class="icon"><i class="fa-solid fa-mountain-sun"></i></div>
+      <h3>Eco Tourism</h3>
+      <p>Scenic hills, lush forests, and breathtaking waterfalls.</p>
+    </div>
+
+    <!-- Card 2 -->
+    <div class="why-card">
+      <div class="icon"><i class="fa-solid fa-gopuram"></i></div>
+      <h3>Spiritual Sites</h3>
+      <p>Deoghar, Parasnath, and Rajrappa—sacred destinations for all.</p>
+    </div>
+
+    <!-- Card 3 -->
+    <div class="why-card">
+      <div class="icon"><i class="fa-solid fa-masks-theater"></i></div>
+      <h3>Cultural Heritage</h3>
+      <p>Experience vibrant tribal traditions, festivals, and dances.</p>
+    </div>
+
+    <!-- Card 4 -->
+    <div class="why-card">
+      <div class="icon"><i class="fa-solid fa-paw"></i></div>
+      <h3>Wildlife & Adventure</h3>
+      <p>Betla National Park, jungle safaris, and trekking trails.</p>
+    </div>
+
+    <!-- Card 5 -->
+    <div class="why-card">
+      <div class="icon"><i class="fa-solid fa-palette"></i></div>
+      <h3>Handicrafts & Art</h3>
+      <p>Discover tribal handicrafts, Sohrai art, and Paitkar paintings.</p>
+    </div>
+
+    <!-- Card 6 -->
+    <div class="why-card">
+      <div class="icon"><i class="fa-solid fa-people-group"></i></div>
+      <h3>Festivals</h3>
+      <p>Celebrate Sarhul, Karma, and Chhath with local communities.</p>
+    </div>
+  </div>
+</section>
+<script src="script.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>AI Itinerary Planner — Incredible Jharkhand</title>
+
+  <style>
+    :root{
+      --forest-green: #2E7D32;
+      --terracotta: #E65100;
+      --river-blue: #0288D1;
+      --bg: #f6fbf6;
+      --card: #ffffff;
+      --muted: #6b6b6b;
+      --radius: 14px;
+      --glass: rgba(255,255,255,0.8);
+    }
+
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+      background: linear-gradient(180deg, #e9f5ea 0%, #f6fbf6 100%);
+      color:#123;
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+      padding:28px;
+    }
+
+    .page {
+      max-width:1100px;
+      margin:0 auto;
+      background: var(--card);
+      border-radius: 18px;
+      overflow: hidden;
+      box-shadow: 0 20px 50px rgba(14,30,9,0.08);
+    }
+
+    header.app-header{
+      display:flex;
+      align-items:center;
+      gap:18px;
+      padding:18px 26px;
+      background: linear-gradient(90deg, rgba(46,125,50,0.95), rgba(40,100,48,0.95));
+      color:white;
+    }
+    header .brand {
+      display:flex;
+      align-items:center;
+      gap:12px;
+    }
+    header .brand img {
+      width:46px;
+      height:46px;
+      border-radius:10px;
+      object-fit:cover;
+      border:2px solid rgba(255,255,255,0.12);
+      background: rgba(255,255,255,0.06);
+    }
+    header h1{font-size:1.05rem;margin:0;font-weight:700;letter-spacing:0.2px}
+    header p{margin:0;color:rgba(255,255,255,0.9);font-size:0.86rem}
+
+    header .actions {
+      margin-left:auto;
+      display:flex;
+      gap:12px;
+      align-items:center;
+    }
+    .btn {
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding:9px 14px;
+      border-radius:10px;
+      font-weight:600;
+      cursor:pointer;
+      text-decoration:none;
+      color:white;
+      border:none;
+    }
+    .btn-ghost {
+      background: transparent;
+      border: 1px solid rgba(255,255,255,0.12);
+      color: #fff;
+    }
+    .btn-primary {
+      background: linear-gradient(90deg, #ff8a36, #e65100);
+      color:white;
+    }
+
+    .hero {
+      padding:28px 26px;
+      display:grid;
+      grid-template-columns: 1fr 420px;
+      gap:24px;
+      align-items:start;
+      background:
+        url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200"><rect fill="%232e7d32" opacity="0.02" width="200" height="200"/></svg>') right bottom no-repeat;
+    }
+
+    .hero-left h2{margin:0 0 8px 0;font-size:1.45rem}
+    .hero-left p{margin:0;color:var(--muted)}
+
+    /* form card & preview card */
+    .card {
+      background: var(--glass);
+      border-radius: 12px;
+      padding:18px;
+      box-shadow: 0 6px 20px rgba(20,60,20,0.04);
+      border:1px solid rgba(45,80,22,0.04);
+    }
+
+    form#itineraryForm {
+      display:flex;
+      flex-direction:column;
+      gap:16px;
+    }
+
+    .grid {
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:12px;
+    }
+
+    label{font-weight:600;color:var(--forest-green);font-size:0.95rem;margin-bottom:6px}
+    select, input[type="text"], .fake-input {
+      width:100%;
+      padding:10px 12px;
+      border-radius:10px;
+      border:1px solid #e6efe6;
+      background:white;
+      font-size:0.95rem;
+    }
+
+    .radio-grid{
+      display:grid;
+      grid-template-columns:repeat(3,1fr);
+      gap:8px;
+    }
+    .radio-option {
+      background:#fff;
+      border-radius:10px;
+      padding:8px 10px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      border:1px solid #e9efe9;
+      cursor:pointer;
+      user-select:none;
+      font-weight:600;
+      color:var(--muted);
+    }
+    .radio-option input{display:none}
+    .radio-option.active{
+      background: linear-gradient(90deg,#4a7c3a,#2d5016);
+      color:white;
+      border-color: rgba(45,80,22,0.12);
+    }
+
+    .checkbox-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+    .checkbox-option {
+      display:flex;
+      gap:10px;
+      align-items:center;
+      padding:10px;
+      border-radius:10px;
+      border:1px solid #eef6ee;
+      background:white;
+      cursor:pointer;
+    }
+    .checkbox-option input{transform:scale(1.15);margin-right:8px}
+
+    .slider {
+      width:100%;
+    }
+
+    .generate-row{
+      display:flex;
+      gap:12px;
+      align-items:center;
+      margin-top:6px;
+    }
+
+    .preview-wrapper{
+      display:flex;
+      flex-direction:column;
+      gap:12px;
+    }
+
+    .preview-header{display:flex;align-items:center;gap:12px}
+    .badge {
+      background:linear-gradient(90deg,#4a7c3a,#2d5016);
+      color:white;padding:6px 10px;border-radius:999px;font-size:0.8rem;font-weight:700;
+    }
+
+    .loading{
+      display:flex;gap:10px;align-items:center;color:var(--muted);font-style:italic;
+    }
+    .dots span{display:inline-block;width:8px;height:8px;background:#4a7c3a;border-radius:999px;margin-right:6px;animation:anim 1s infinite}
+    .dots span:nth-child(2){animation-delay:0.15s}
+    .dots span:nth-child(3){animation-delay:0.3s}
+    @keyframes anim {50%{transform:translateY(-6px);opacity:0.6}}
+
+    .itinerary-day{background:white;padding:12px;border-radius:10px;border-left:5px solid #4a7c3a;margin-bottom:12px}
+    .itinerary-day h4{margin:0 0 6px 0}
+    .meta {font-size:0.9rem;color:var(--muted)}
+
+    .actions-row{display:flex;gap:10px}
+    .small-btn{padding:8px 12px;border-radius:8px;border:none;cursor:pointer;font-weight:600}
+    .small-btn.copy{background:#2d8659;color:white}
+    .small-btn.download{background:#0366a6;color:white}
+
+    footer{padding:16px 26px;background:#fbfff9;border-top:1px solid #eef6ee;color:var(--muted);display:flex;justify-content:space-between;align-items:center}
+
+    @media (max-width:960px){
+      .hero{grid-template-columns:1fr; padding:18px}
+      .grid{grid-template-columns:1fr}
+      .radio-grid{grid-template-columns:repeat(2,1fr)}
+      .checkbox-grid{grid-template-columns:1fr}
+    }
+  </style>
+</head>
+
+<body>
+  <main class="page" role="main" aria-labelledby="pageTitle">
+    <header class="app-header" role="banner">
+      <div class="brand" aria-hidden="false">
+        <a href="index.html" style="display:flex;align-items:center;gap:12px;text-decoration:none;color:inherit">
+          <img src="logo.png" alt="Incredible Jharkhand logo" onerror="this.style.display='none'">
+          <div>
+            <h1 style="margin:0;font-size:1rem">Incredible Jharkhand</h1>
+            <p style="margin:0;font-size:0.78rem;opacity:0.95">AI Itinerary Planner</p>
+          </div>
+        </a>
+      </div>
+
+      <div class="actions" role="navigation" aria-label="Top actions">
+        <a class="btn btn-ghost" href="index.html" title="Back to Home">← Home</a>
+        <a class="btn btn-primary" href="#planner" title="Start planning">Start Planning</a>
+      </div>
+    </header>
+
+    <section class="hero" id="planner" aria-labelledby="pageTitle" role="region">
+      <div class="hero-left">
+        <h2 id="pageTitle">Your Smart Jharkhand Travel Planner</h2>
+        <p>Tell us the basics and our AI-simulated engine will craft a practical, Jharkhand-focused trip plan — including nature spots, temples, tribal culture, homestays, and local experiences.</p>
+
+        <div style="height:18px"></div>
+
+        <div class="card" aria-hidden="false" role="form" style="padding:14px">
+          <form id="itineraryForm" autocomplete="off">
+            <div class="grid">
+              <div>
+                <label for="days">Number of days</label>
+                <select id="days" name="days" required aria-required="true">
+                  <option value="">Choose duration</option>
+                  <option value="1">1 Day</option>
+                  <option value="2">2 Days</option>
+                  <option value="3">3 Days</option>
+                  <option value="4">4 Days</option>
+                  <option value="5">5 Days</option>
+                  <option value="6">6 Days</option>
+                  <option value="7">7 Days</option>
+                  <option value="8">8 Days</option>
+                  <option value="9">9 Days</option>
+                  <option value="10">10+ Days</option>
+                </select>
+              </div>
+
+              <div>
+                <label>Trip type</label>
+                <div class="radio-grid" role="radiogroup" aria-label="Trip type">
+                  <!-- radio options -->
+                  <label class="radio-option" data-value="solo"><input type="radio" name="tripType" value="solo"> Solo</label>
+                  <label class="radio-option" data-value="family"><input type="radio" name="tripType" value="family"> Family</label>
+                  <label class="radio-option" data-value="friends"><input type="radio" name="tripType" value="friends"> Friends</label>
+                  <label class="radio-option" data-value="spiritual"><input type="radio" name="tripType" value="spiritual"> Spiritual</label>
+                  <label class="radio-option" data-value="adventure"><input type="radio" name="tripType" value="adventure"> Adventure</label>
+                  <label class="radio-option" data-value="romantic"><input type="radio" name="tripType" value="romantic"> Romantic</label>
+                </div>
+              </div>
+            </div>
+
+            <div style="margin-top:10px">
+              <label>Your interests</label>
+              <div class="checkbox-grid" role="group" aria-label="Interests">
+                <label class="checkbox-option"><input type="checkbox" name="interests" value="nature"> <span>Nature & Wildlife</span></label>
+                <label class="checkbox-option"><input type="checkbox" name="interests" value="temples"> <span>Temples & Spirituality</span></label>
+                <label class="checkbox-option"><input type="checkbox" name="interests" value="waterfalls"> <span>Waterfalls & Scenic</span></label>
+                <label class="checkbox-option"><input type="checkbox" name="interests" value="culture"> <span>Tribal Culture & Heritage</span></label>
+                <label class="checkbox-option"><input type="checkbox" name="interests" value="trekking"> <span>Adventure & Trekking</span></label>
+                <label class="checkbox-option"><input type="checkbox" name="interests" value="handicrafts"> <span>Handicrafts & Shopping</span></label>
+              </div>
+            </div>
+
+            <div style="margin-top:10px">
+              <label for="budget">Budget</label>
+              <input id="budget" name="budget" type="range" class="slider" min="1" max="3" value="2" aria-valuemin="1" aria-valuemax="3" aria-valuenow="2">
+              <div style="display:flex;justify-content:space-between;font-size:0.9rem;color:var(--muted);margin-top:6px">
+                <span>Budget</span><span>Mid-range</span><span>Luxury</span>
+              </div>
+            </div>
+
+            <div class="generate-row" style="margin-top:14px">
+              <button type="submit" id="generateBtn" class="btn btn-primary" aria-live="polite">Generate My Itinerary</button>
+              <div style="margin-left:auto;color:var(--muted);font-size:0.9rem;align-self:center">Example output is sample & shareable</div>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <aside class="hero-right">
+        <div class="card preview-wrapper" id="previewCard" aria-live="polite">
+          <div class="preview-header">
+            <div class="badge" aria-hidden="true">AI</div>
+            <div>
+              <div style="font-weight:700">Preview</div>
+              <div style="font-size:0.9rem;color:var(--muted)">Generated itinerary will appear here</div>
+            </div>
+          </div>
+
+          <div id="preview" style="margin-top:12px">
+            <div class="loading">
+              <div style="display:flex;flex-direction:column;gap:6px">
+                <div style="font-weight:700">Start by choosing preferences</div>
+                <div class="meta">Example: 3-day cultural + nature trip around Ranchi & Netarhat</div>
+              </div>
+            </div>
+          </div>
+
+          <div style="margin-top:12px;display:flex;gap:8px">
+            <button class="small-btn copy" id="copyBtn" title="Copy itinerary">Copy</button>
+            <button class="small-btn download" id="downloadBtn" title="Download itinerary">Download</button>
+            <a class="small-btn" id="shareBtn" style="background:#f5f5f5;color:#123;border:1px solid #e6e6e6;text-decoration:none;padding:8px 10px;border-radius:8px" href="#" onclick="alert('Share integration coming soon')">Share</a>
+          </div>
+        </div>
+      </aside>
+    </section>
+
+    <footer>
+      <div>© <strong>Incredible Jharkhand</strong> — AI Itinerary Planner</div>
+      <div class="meta">Built for Smart India Hackathon • Prototype</div>
+    </footer>
+  </main>
+
+  <script>
+    // Simple client-side AI simulation (standalone). No external APIs.
+    (function(){
+      const templates = {
+        nature: {
+          1: ["Morning: Hundru Falls exploration → Afternoon: Rock Garden → Evening: Kanke Dam sunset."],
+          2: ["Day 1: Ranchi arrival → Hundru Falls → Tagore Hill evening.", "Day 2: Betla National Park safari → Local village visit."],
+          3: ["Day 1: Ranchi → Hundru Falls → Rock Garden", "Day 2: Betla National Park full-day safari", "Day 3: Netarhat sunrise → Pine forest walk → Departure"]
+        },
+        temples: {
+          1: ["Morning: Baidyanath Temple darshan → Evening: local rituals & market."],
+          2: ["Day 1: Deoghar Baidyanath darshan → Evening aarti", "Day 2: Basukinath & Jasidih spiritual sites."],
+          3: ["Day 1: Deoghar temple complex", "Day 2: Parasnath pilgrimage", "Day 3: Local temple circuits & heritage strolls"]
+        },
+        waterfalls: {
+          1: ["Morning: Hundru Falls → Afternoon: Jonha/Dassam sightseeing."],
+          2: ["Day 1: Hundru & Jonha Falls tour", "Day 2: Dassam Falls → Hirni Falls exploration."],
+          3: ["Day 1: Ranchi waterfalls circuit", "Day 2: Latehar district falls", "Day 3: Netarhat scenic spots"]
+        },
+        culture: {
+          1: ["Morning: Tribal museum visit → Afternoon: Village crafts workshop → Evening: folk dance."],
+          2: ["Day 1: Ranchi tribal heritage sites", "Day 2: Village homestay & Sohrai art workshop"],
+          3: ["Day 1: Museums & markets", "Day 2: Village cultural immersion", "Day 3: Handicraft workshops & traditional meals"]
+        },
+        trekking: {
+          1: ["Morning trek & viewpoint → Evening campfire (short trek)."],
+          2: ["Day 1: Local moderate trek → Day 2: Full day trekking expedition"],
+          3: ["Multi-day trek: campsite, nature photography, local guides"]
+        },
+        handicrafts: {
+          1: ["Morning: Local crafts market → Workshop → Souvenir shopping."],
+          2: ["Day 1: Handicraft markets & workshops", "Day 2: Meet artisans & buy traditional pieces"],
+          3: ["Day 1: Handicraft trail", "Day 2: Workshops & village studios", "Day 3: Curated shopping & packing"]
+        }
+      };
+
+      const budgetNotes = {
+        1: "Budget-friendly accommodations and local transport",
+        2: "Comfortable mid-range hotels and AC transport",
+        3: "Luxury resorts, private transfers and curated experiences"
+      };
+
+      const tripTypeNotes = {
+        solo: "Flexible timings — good for solo exploration",
+        family: "Family-friendly pace and activities",
+        friends: "Group activities and adventure-focused",
+        spiritual: "Focus on temples, rituals and meditation",
+        adventure: "High-energy outdoor activities and treks",
+        romantic: "Scenic, intimate experiences"
+      };
+
+      const form = document.getElementById('itineraryForm');
+      const preview = document.getElementById('preview');
+      const generateBtn = document.getElementById('generateBtn');
+      const copyBtn = document.getElementById('copyBtn');
+      const downloadBtn = document.getElementById('downloadBtn');
+
+      // helper: get checked trip type visually and toggle active class
+      document.querySelectorAll('.radio-option').forEach(label => {
+        label.addEventListener('click', () => {
+          document.querySelectorAll('.radio-option').forEach(l => l.classList.remove('active'));
+          label.classList.add('active');
+          const input = label.querySelector('input[type="radio"]');
+          if (input) input.checked = true;
+        });
+      });
+
+      // checkbox visual toggle
+      document.querySelectorAll('.checkbox-option').forEach(label => {
+        label.addEventListener('click', (e) => {
+          if (e.target.tagName !== 'INPUT') {
+            const cb = label.querySelector('input[type="checkbox"]');
+            cb.checked = !cb.checked;
+          }
+        });
+      });
+
+      function showLoading() {
+        preview.innerHTML = `
+          <div class="loading" role="status" aria-live="polite">
+            <div style="font-weight:700">Crafting your Jharkhand journey</div>
+            <div class="dots" aria-hidden="true"><span></span><span></span><span></span></div>
+          </div>
+        `;
+      }
+
+      function buildItineraryText(days, tripType, budget, interests){
+        // pick primary interest
+        const primary = interests[0] || 'nature';
+        const baseTemplates = templates[primary] || templates['nature'];
+        const key = Math.min(days, 3); // choose 1/2/3-day template
+        let plan = baseTemplates[key] || baseTemplates[3] || [];
+
+        // If days > 3, append extra days combining interests
+        if(days > 3){
+          for(let d = 4; d <= days; d++){
+            const idx = (d-4) % interests.length;
+            const interest = interests[idx] || primary;
+            const extraTemplates = templates[interest] || templates[primary] || templates['nature'];
+            const extra = (extraTemplates[1] && extraTemplates[1][0]) || (`Day ${d}: Local exploration, culture & relaxation.`);
+            plan.push(extra.replace(/^/, `Day ${d}: `)); // ensure day label
+          }
+        }
+
+        // Normalize day strings to ensure "Day X:" label
+        const normalized = plan.map((entry, i) => {
+          if (/^Day\s*\d+/i.test(entry)) return entry;
+          return `Day ${i+1}: ${entry}`;
+        });
+
+        const header = `Jharkhand Trip — ${days} day(s) • ${tripTypeNotes[tripType] || ''} • ${budgetNotes[budget]}\n\n`;
+        const body = normalized.join('\n\n');
+        return header + body;
+      }
+
+      function renderItinerary(text){
+        // Convert text to HTML day blocks for display
+        const lines = text.split('\n').filter(Boolean);
+        // First line(s) until first "Day" are meta; find index
+        let firstDayIndex = lines.findIndex(l => /^Day\s*\d+/i.test(l));
+        if(firstDayIndex === -1) firstDayIndex = 0;
+
+        const meta = lines.slice(0, firstDayIndex).join(' ');
+        const dayLines = lines.slice(firstDayIndex);
+
+        let html = '';
+        if(meta) html += `<div style="padding:10px;border-radius:8px;background:#f1fdf4;color:#1f5e2f;margin-bottom:10px"><strong>Summary:</strong> ${meta}</div>`;
+        dayLines.forEach(dayText => {
+          // dayText like "Day 1: ...", split at ':'
+          const parts = dayText.split(':');
+          const dayTitle = parts.shift();
+          const rest = parts.join(':').trim();
+          html += `<div class="itinerary-day" role="article"><h4>${dayTitle}</h4><div>${rest}</div></div>`;
+        });
+
+        // Add footer info
+        html += `
+          <div style="padding:10px;border-radius:8px;background:#ffffff;border:1px solid #eef6ee">
+            <div class="meta"><strong>Notes:</strong> Customize timings, book homestays locally, consult guides for safaris.</div>
+          </div>
+        `;
+        preview.innerHTML = html;
+      }
+
+      form.addEventListener('submit', (e) => {
+        e.preventDefault();
+
+        // collect values
+        const formData = new FormData(form);
+        const days = parseInt(formData.get('days'));
+        const tripType = formData.get('tripType');
+        const budget = parseInt(formData.get('budget') || 2);
+        const interests = formData.getAll('interests');
+
+        // validation
+        if(!days){
+          alert('Please select number of days.');
+          return;
+        }
+        if(!tripType){
+          alert('Please choose a trip type.');
+          return;
+        }
+        if(interests.length === 0){
+          alert('Select at least one interest to help personalize your plan.');
+          return;
+        }
+
+        showLoading();
+        generateBtn.disabled = true;
+        generateBtn.textContent = 'Generating...';
+
+        // simulate AI delay
+        setTimeout(() => {
+          const itineraryText = buildItineraryText(days, tripType, budget, interests);
+          renderItinerary(itineraryText);
+          // store current itinerary text on preview element for copy/download
+          preview.dataset.itinerary = itineraryText;
+          generateBtn.disabled = false;
+          generateBtn.textContent = 'Generate My Itinerary';
+        }, 1200);
+      });
+
+      // copy functionality
+      copyBtn.addEventListener('click', () => {
+        const text = preview.dataset.itinerary;
+        if(!text){
+          alert('No itinerary yet. Generate one first.');
+          return;
+        }
+        navigator.clipboard?.writeText(text).then(() => {
+          alert('Itinerary copied to clipboard.');
+        }).catch(() => {
+          // fallback
+          const ta = document.createElement('textarea');
+          ta.value = text;
+          document.body.appendChild(ta);
+          ta.select();
+          try{document.execCommand('copy'); alert('Itinerary copied to clipboard.');}catch{alert('Could not copy.')}
+          ta.remove();
+        });
+      });
+
+      // download functionality
+      downloadBtn.addEventListener('click', () => {
+        const text = preview.dataset.itinerary;
+        if(!text){
+          alert('No itinerary yet. Generate one first.');
+          return;
+        }
+        const blob = new Blob([text], {type:'text/plain;charset=utf-8'});
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'jharkhand-itinerary.txt';
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        URL.revokeObjectURL(url);
+      });
+
+      // offer helpful sample on page load
+      document.addEventListener('DOMContentLoaded', () => {
+        preview.dataset.itinerary = '';
+      });
+
+    })();
+  </script>
+</body>
+</html>
