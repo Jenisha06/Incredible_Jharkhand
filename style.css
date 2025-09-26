@@ -100,7 +100,7 @@
             width: 100%;
         }
 
-        .multilingual-btn, .login-btn {
+        .multilingual-btn, .login-btn ,.sos-button{
             padding: 0.6rem 1.5rem;
             border-radius:8px;
             text-decoration: none;
@@ -122,6 +122,21 @@
             transform: translateY(-2px);
             box-shadow: 0 8px 20px rgba(46, 125, 50, 0.2);
         }
+        
+
+        .multilingual-btn {
+            background: rgba(46, 125, 50, 0.1);
+            color: #2E7D32;
+            margin-right: 1rem;
+            border: 1px solid rgba(46, 125, 50, 0.3);
+        }
+
+        .multilingual-btn:hover {
+            background: rgba(46, 125, 50, 0.2);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(46, 125, 50, 0.2);
+        }
+
 
         .login-btn {
             background: linear-gradient(135deg, #020202, #132413);
@@ -534,5 +549,6 @@
     }
 
    
+
 
 
