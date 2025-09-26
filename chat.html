@@ -3,19 +3,21 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Floating Chatbot Demo — Green Theme</title>
+  <title>Floating Chatbot — Pretty Green Theme</title>
   <style>
     :root{
       /* Theme & sizing */
-      --accent: #4CAF50;         /* primary green */
-      --accent-dark: #388E3C;    /* darker green for hover/gradient */
-      --accent-soft: #E8F5E9;    /* user bubble */
-      --bot-soft: #F1F8E9;       /* bot bubble */
+      --accent: #3db56b;         /* primary green */
+      --accent-dark: #2f9a5b;    /* darker green for hover/gradient */
+      --accent-soft: #EAF7EE;    /* user bubble */
+      --bot-soft: #F5FBF6;       /* bot bubble */
+      --muted: #6b6f73;
       --white: #ffffff;
 
       /* Chat size (adjust these numbers if you want even bigger) */
-      --chat-width: 420px;
-      --chat-height: 560px;
+      --chat-width: 440px;
+      --chat-height: 600px;
+      --radius: 14px;
     }
 
     /* reset for this widget only (help avoid site CSS conflicts) */
@@ -23,58 +25,60 @@
 
     body{
       margin:0;
-      font-family: 'Segoe UI', Arial, sans-serif;
+      font-family: Inter, "Segoe UI", Roboto, Arial, sans-serif;
       background: transparent;
       min-height:100vh;
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
     }
 
     /* Floating toggle button */
     .float-btn{
       position:fixed;
-      right:20px;
-      bottom:20px;
-      width:64px;
-      height:64px;
+      right:22px;
+      bottom:22px;
+      width:68px;
+      height:68px;
       border-radius:50%;
-      background:var(--accent);
+      background:linear-gradient(180deg,var(--accent),var(--accent-dark));
       color:white;
       display:flex;
       align-items:center;
       justify-content:center;
-      box-shadow:0 12px 30px rgba(0,0,0,0.22);
+      box-shadow:0 18px 40px rgba(49,94,63,0.22);
       cursor:pointer;
-      z-index:2147483646; /* very high */
-      transition:transform .15s, box-shadow .15s;
+      z-index:2147483646;
+      transition:transform .12s ease, box-shadow .12s ease;
+      border: none;
     }
-    .float-btn:active{ transform:scale(.96); }
-    .float-btn:hover{ box-shadow:0 18px 38px rgba(0,0,0,0.28); }
-    .float-btn .icon{ font-weight:700; font-size:22px; line-height:1; }
+    .float-btn:active{ transform:scale(.97); }
+    .float-btn:hover{ box-shadow:0 22px 48px rgba(49,94,63,0.28); }
+    .float-btn .icon{ font-weight:700; font-size:26px; line-height:1; }
 
-    /* Floating chat window (hidden by default via opacity/visibility) */
+    /* Floating chat window */
     .floating-chat{
       position:fixed;
       right:20px;
-      bottom:96px;
+      bottom:100px;
       width:var(--chat-width);
       max-height:82vh;
       height:var(--chat-height);
       background:var(--white);
-      border-radius:14px;
-      box-shadow:0 20px 48px rgba(0,0,0,0.22);
+      border-radius:var(--radius);
+      box-shadow:0 28px 64px rgba(20,40,20,0.18);
       display:flex;
       flex-direction:column;
       overflow:hidden;
       z-index:2147483645;
       transform-origin:bottom right;
-      transition: opacity .18s ease, transform .18s ease, visibility .18s;
+      transition: opacity .18s ease, transform .18s ease, visibility .18s, right .12s;
       opacity:0;
-      transform: translateY(14px) scale(.98);
+      transform: translateY(10px) scale(.98);
       visibility:hidden;
       pointer-events:none;
-      border: 1px solid rgba(0,0,0,0.04);
+      border:1px solid rgba(14,55,26,0.06);
     }
 
-    /* visible state */
     .floating-chat.open{
       opacity:1;
       transform: translateY(0) scale(1);
@@ -82,117 +86,224 @@
       pointer-events:auto;
     }
 
-    /* Topbar */
+    /* Draggable header + avatar */
     .floating-chat .topbar{
       display:flex;
       align-items:center;
-      justify-content:space-between;
+      gap:12px;
       padding:12px 14px;
-      background: linear-gradient(135deg, var(--accent), var(--accent-dark));
+      background: linear-gradient(135deg, rgba(61,181,107,0.98), rgba(47,154,91,0.98));
       color:var(--white);
-      border-top-left-radius:14px;
-      border-top-right-radius:14px;
-      box-shadow: inset 0 -1px 0 rgba(255,255,255,0.12);
+      border-top-left-radius:var(--radius);
+      border-top-right-radius:var(--radius);
+      cursor:grab;
+      user-select:none;
+      box-shadow: inset 0 -1px 0 rgba(255,255,255,0.08);
     }
-    .floating-chat .topbar .title{ font-weight:600; font-size:15px; letter-spacing:0.2px; }
-    .floating-chat .topbar .controls{ display:flex; gap:8px; align-items:center; }
-    .floating-chat .topbar button{
-      background:rgba(255,255,255,0.18);
-      border:none;
-      color:var(--white);
-      cursor:pointer;
-      font-size:16px;
-      width:30px;
-      height:30px;
-      border-radius:50%;
+    .floating-chat .topbar:active{ cursor:grabbing; }
+
+    .avatar {
+      width:36px;
+      height:36px;
+      border-radius:10px;
+      background:rgba(255,255,255,0.12);
       display:inline-flex;
       align-items:center;
       justify-content:center;
-      transition: background .15s;
+      font-weight:700;
+      font-size:18px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.08);
     }
-    .floating-chat .topbar button:hover{
-      background:rgba(255,255,255,0.3);
+
+    .floating-chat .title-wrap{
+      display:flex;
+      flex-direction:column;
+      gap:2px;
+      min-width:0;
     }
+    .floating-chat .title{
+      font-weight:650;
+      font-size:15px;
+      letter-spacing:0.2px;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+    .floating-chat .subtitle{
+      font-size:12px;
+      color:rgba(255,255,255,0.9);
+      opacity:0.92;
+    }
+
+    .floating-chat .controls{
+      margin-left:auto;
+      display:flex;
+      gap:8px;
+      align-items:center;
+    }
+    .floating-chat .control-btn{
+      background:transparent;
+      border:none;
+      color:rgba(255,255,255,0.92);
+      cursor:pointer;
+      font-size:18px;
+      line-height:1;
+      padding:6px;
+      border-radius:8px;
+      transition: background .12s;
+    }
+    .floating-chat .control-btn:hover{ background: rgba(255,255,255,0.08); }
 
     /* Conversation area */
     #f-conversation{
       flex:1;
-      padding:16px;
+      padding:18px;
       overflow:auto;
       display:flex;
       flex-direction:column;
       gap:12px;
-      background: #fbfff9; /* very light green/white */
+      background: linear-gradient(180deg,#fbfff9,#fcfff7);
+    }
+
+    /* Smooth custom scrollbar (modern browsers) */
+    #f-conversation::-webkit-scrollbar{ width:10px; }
+    #f-conversation::-webkit-scrollbar-thumb{
+      background: linear-gradient(180deg, rgba(60,140,80,0.18), rgba(60,140,80,0.12));
+      border-radius:999px;
+    }
+
+    .msg-row{ display:flex; gap:10px; align-items:flex-end; max-width:100%; }
+
+    .user-msg-wrap{ justify-content:flex-end; }
+    .bot-msg-wrap{ justify-content:flex-start; }
+
+    .bubble {
+      display:inline-block;
+      padding:10px 14px;
+      border-radius:12px;
+      max-width:80%;
+      font-size:14px;
+      line-height:1.45;
+      box-shadow: 0 6px 18px rgba(20,50,20,0.04);
+      opacity:0;
+      transform: translateY(6px);
+      animation: msgIn .22s ease forwards;
+    }
+
+    @keyframes msgIn {
+      to{ opacity:1; transform: translateY(0); }
     }
 
     .user-msg{
-      align-self:flex-end;
       background: var(--accent-soft);
-      color:#06270a;
-      padding:10px 14px;
-      border-radius:14px 14px 4px 14px;
-      max-width:78%;
-      word-wrap:break-word;
-      font-size:14px;
-      line-height:1.4;
-      box-shadow: 0 1px 0 rgba(0,0,0,0.04);
+      color:#04421a;
+      border-radius:14px 14px 6px 14px;
     }
 
     .bot-msg{
-      align-self:flex-start;
       background: var(--bot-soft);
-      color:#113008;
-      padding:10px 14px;
-      border-radius:14px 14px 14px 4px;
-      max-width:78%;
-      word-wrap:break-word;
-      font-size:14px;
-      line-height:1.4;
-      box-shadow: 0 1px 0 rgba(0,0,0,0.04);
+      color:#0b3d1a;
+      border-radius:14px 14px 14px 6px;
     }
+
+    .meta {
+      display:flex;
+      gap:8px;
+      align-items:center;
+      margin-top:6px;
+      font-size:11px;
+      color:var(--muted);
+    }
+
+    .meta .time{ opacity:0.8; }
+
+    /* Typing indicator */
+    .typing {
+      display:inline-flex;
+      gap:6px;
+      align-items:center;
+      padding:8px 12px;
+      border-radius:12px;
+      background: rgba(15,60,30,0.04);
+    }
+    .typing .dot{
+      width:7px; height:7px; border-radius:50%; background:var(--muted); opacity:0.6;
+      animation: blink 1s infinite;
+    }
+    .typing .dot:nth-child(2){ animation-delay:.12s; }
+    .typing .dot:nth-child(3){ animation-delay:.24s; }
+    @keyframes blink{ 0%{opacity:.2} 50%{opacity:1} 100%{opacity:.2} }
 
     /* Input area */
     .input-area{
       display:flex;
-      gap:8px;
-      padding:12px;
-      border-top:1px solid rgba(0,0,0,0.05);
+      gap:10px;
+      padding:14px;
+      border-top:1px solid rgba(10,40,20,0.04);
       background:#fff;
       align-items:center;
     }
 
     #f-prompt{
       flex:1;
-      padding:10px;
+      padding:12px 14px;
       border-radius:12px;
-      border:1px solid #e6eee6;
+      border:1px solid #e6efe6;
       font-size:14px;
       outline:none;
       background: #fcfff8;
-      transition: box-shadow .12s, border-color .12s;
+      transition: box-shadow .12s, border-color .12s, transform .06s;
+      min-height:44px;
+      line-height:1.3;
+      resize:none;
     }
     #f-prompt:focus{
-      box-shadow: 0 6px 18px rgba(60,120,60,0.08);
+      box-shadow: 0 8px 26px rgba(61,181,107,0.08);
       border-color: var(--accent);
     }
 
-    #f-send{
-      padding:9px 14px;
-      background:var(--accent);
-      color:white;
-      border:none;
-      border-radius:12px;
+    .send-wrap{ display:flex; gap:8px; align-items:center; }
+    .icon-btn{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      border-radius:10px;
+      padding:8px;
       cursor:pointer;
-      font-size:14px;
-      box-shadow: 0 8px 20px rgba(60,120,60,0.12);
-      transition: background .12s, transform .08s;
+      border:none;
+      background:linear-gradient(180deg,var(--accent),var(--accent-dark));
+      color:white;
+      box-shadow:0 8px 22px rgba(49,94,63,0.14);
+      transition: transform .08s ease, opacity .12s;
+      font-size:15px;
+      height:44px;
+      min-width:44px;
     }
-    #f-send:hover{ background:var(--accent-dark); transform: translateY(-1px); }
-    #f-send:active{ transform: translateY(0); }
+    .icon-btn:active{ transform:scale(.985); }
+    .icon-btn[disabled]{
+      opacity:0.55;
+      cursor:not-allowed;
+      box-shadow:none;
+      transform:none;
+      background:linear-gradient(180deg, rgba(61,181,107,0.7), rgba(47,154,91,0.7));
+    }
+
+    /* subtle helper row */
+    .helper{
+      display:flex;
+      gap:8px;
+      padding:10px 18px;
+      font-size:12px;
+      color:var(--muted);
+      border-top:1px dashed rgba(10,40,20,0.02);
+      background:transparent;
+      align-items:center;
+      justify-content:flex-start;
+    }
 
     /* small screens tweak */
     @media (max-width:420px){
-      :root{ --chat-width: 92vw; --chat-height: 70vh; }
+      :root{ --chat-width: 94vw; --chat-height: 72vh; }
       .float-btn{ right:12px; bottom:12px; width:56px; height:56px; }
       .floating-chat{ right:12px; bottom:80px; }
     }
@@ -208,26 +319,38 @@
     </button>
 
     <!-- Floating chat window -->
-    <div class="floating-chat" id="floatingChat" role="dialog" aria-hidden="true" aria-label="Chat assistant">
-      <div class="topbar">
-        <div class="title">Assistant</div>
+    <div class="floating-chat" id="floatingChat" role="dialog" aria-hidden="true" aria-label="Chat assistant" aria-live="polite">
+      <div class="topbar" id="dragHandle">
+        <div class="avatar" aria-hidden="true">AI</div>
+        <div class="title-wrap">
+          <div class="title">Green Assistant</div>
+          <div class="subtitle">Helpful • Fast • Friendly</div>
+        </div>
+
         <div class="controls" role="group" aria-label="Window controls">
-          <button id="minBtn" title="Minimize" aria-label="Minimize">─</button>
-          <button id="closeBtn" title="Close" aria-label="Close">×</button>
+          <button class="control-btn" id="minBtn" title="Minimize" aria-label="Minimize">─</button>
+          <button class="control-btn" id="closeBtn" title="Close" aria-label="Close">×</button>
         </div>
       </div>
 
-      <div id="f-conversation" aria-live="polite" aria-atomic="false"></div>
+      <div id="f-conversation" aria-atomic="false"></div>
+
+      <div class="helper">Tip: Press <kbd>Enter</kbd> to send — Shift+Enter for a new line.</div>
 
       <div class="input-area">
-        <input type="text" id="f-prompt" placeholder="Ask me..." aria-label="Chat input" />
-        <button id="f-send" aria-label="Send message">Send</button>
+        <textarea id="f-prompt" placeholder="Ask me anything..." aria-label="Chat input" rows="1"></textarea>
+        <div class="send-wrap">
+          <button id="f-send" class="icon-btn" title="Send message" aria-label="Send message" disabled>
+            ➤
+          </button>
+        </div>
       </div>
     </div>
   </div>
 
   <script>
-    const API_KEY = "AIzaSyCfGNQLBQNq7AXfvm5AbcpztZDbt72SfLI"; // secure this in prod
+    /* NOTE: keep keys secure in production — this demo uses the same key from your example */
+    const API_KEY = "AIzaSyCfGNQLBQNq7AXfvm5AbcpztZDbt72SfLI";
     const MODEL_ENDPOINT = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent';
 
     const fPrompt = document.getElementById('f-prompt');
@@ -237,12 +360,63 @@
     const floatingChat = document.getElementById('floatingChat');
     const closeBtn = document.getElementById('closeBtn');
     const minBtn = document.getElementById('minBtn');
+    const dragHandle = document.getElementById('dragHandle');
 
-    function appendMessage(container, text, cls){
-      const el = document.createElement('div');
-      el.className = cls;
-      el.textContent = text;
-      container.appendChild(el);
+    /* small autosize for textarea */
+    function autosize(el){
+      el.style.height = 'auto';
+      el.style.height = (el.scrollHeight) + 'px';
+    }
+    fPrompt.addEventListener('input', () => {
+      autosize(fPrompt);
+      fSend.disabled = !fPrompt.value.trim();
+    });
+    autosize(fPrompt);
+
+    /* Append message with meta (timestamp) */
+    function formatTime(d = new Date()){
+      return d.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
+    }
+    function appendMessage(container, text, cls, withMeta = true){
+      const wrap = document.createElement('div');
+      wrap.className = 'msg-row ' + (cls === 'user-msg' ? 'user-msg-wrap' : 'bot-msg-wrap');
+
+      const bubble = document.createElement('div');
+      bubble.className = 'bubble ' + cls;
+      bubble.textContent = text;
+
+      const meta = document.createElement('div');
+      meta.className = 'meta';
+      if(withMeta){
+        const time = document.createElement('span');
+        time.className = 'time';
+        time.textContent = formatTime();
+        meta.appendChild(time);
+      }
+
+      const col = document.createElement('div');
+      col.style.display = 'flex';
+      col.style.flexDirection = 'column';
+      col.appendChild(bubble);
+      if(withMeta) col.appendChild(meta);
+
+      if(cls === 'user-msg'){
+        wrap.appendChild(col);
+      } else {
+        // small avatar for bot messages
+        const av = document.createElement('div');
+        av.className = 'avatar';
+        av.style.width = '32px';
+        av.style.height = '32px';
+        av.style.borderRadius = '8px';
+        av.style.fontSize = '13px';
+        av.style.background = 'linear-gradient(180deg, rgba(61,181,107,0.12), rgba(47,154,91,0.08))';
+        av.textContent = 'A';
+        wrap.appendChild(av);
+        wrap.appendChild(col);
+      }
+
+      container.appendChild(wrap);
       container.scrollTop = container.scrollHeight;
     }
 
@@ -250,12 +424,52 @@
       return JSON.stringify({contents:[{parts:[{text}]}]});
     }
 
+    function showTyping(){
+      // ensure single typing indicator
+      const existing = document.getElementById('typing-indicator');
+      if(existing) return;
+      const wrap = document.createElement('div');
+      wrap.className = 'msg-row bot-msg-wrap';
+      wrap.id = 'typing-indicator';
+
+      const av = document.createElement('div');
+      av.className = 'avatar';
+      av.style.width = '32px';
+      av.style.height = '32px';
+      av.style.borderRadius = '8px';
+      av.style.fontSize = '13px';
+      av.style.background = 'linear-gradient(180deg, rgba(61,181,107,0.12), rgba(47,154,91,0.08))';
+      av.textContent = 'A';
+
+      const typing = document.createElement('div');
+      typing.className = 'typing';
+      const d1 = document.createElement('span'); d1.className='dot';
+      const d2 = document.createElement('span'); d2.className='dot';
+      const d3 = document.createElement('span'); d3.className='dot';
+      typing.appendChild(d1); typing.appendChild(d2); typing.appendChild(d3);
+
+      wrap.appendChild(av);
+      const col = document.createElement('div');
+      col.appendChild(typing);
+      wrap.appendChild(col);
+      fConv.appendChild(wrap);
+      fConv.scrollTop = fConv.scrollHeight;
+    }
+
+    function hideTyping(){
+      const el = document.getElementById('typing-indicator');
+      if(el) el.remove();
+    }
+
     function sendToModel(text,onResult,onError){
       const myHeaders = new Headers();
       myHeaders.append('Content-Type','application/json');
       myHeaders.append('X-goog-api-key', API_KEY);
       fetch(MODEL_ENDPOINT, { method:'POST', headers: myHeaders, body: buildRequestPayload(text) })
-      .then(r=>r.json())
+      .then(r=>{
+        if(!r.ok) throw new Error('Network response was not ok: ' + r.status);
+        return r.json();
+      })
       .then(result=>{
         try{
           const reply = result.candidates?.[0]?.content?.parts?.[0]?.text || '[no reply]';
@@ -270,18 +484,27 @@
       if(!txt) return;
       appendMessage(fConv, txt, 'user-msg');
       fPrompt.value = '';
-      // placeholder bot message shows loading
-      appendMessage(fConv, '...', 'bot-msg');
-      const placeholder = fConv.lastElementChild;
+      autosize(fPrompt);
+      fSend.disabled = true;
+
+      showTyping();
+      // call model
       sendToModel(txt, (reply) => {
-        placeholder.textContent = reply;
+        hideTyping();
+        appendMessage(fConv, reply, 'bot-msg');
       }, (err) => {
-        placeholder.textContent = 'Error: ' + (err?.message || err);
+        hideTyping();
+        appendMessage(fConv, 'Error: ' + (err?.message || err), 'bot-msg');
       });
     }
 
     fSend.addEventListener('click', sendFloatingMsg);
-    fPrompt.addEventListener('keydown', e => { if(e.key === 'Enter') sendFloatingMsg(); });
+    fPrompt.addEventListener('keydown', e => {
+      if(e.key === 'Enter' && !e.shiftKey){
+        e.preventDefault();
+        sendFloatingMsg();
+      }
+    });
 
     floatToggle.addEventListener('click', () => {
       const opening = !floatingChat.classList.contains('open');
@@ -289,7 +512,7 @@
         floatingChat.classList.add('open');
         floatingChat.setAttribute('aria-hidden','false');
         floatToggle.setAttribute('aria-expanded','true');
-        fPrompt.focus();
+        setTimeout(()=> fPrompt.focus(), 80);
       } else {
         floatingChat.classList.remove('open');
         floatingChat.setAttribute('aria-hidden','true');
@@ -305,7 +528,6 @@
     });
 
     minBtn.addEventListener('click', () => {
-      // minimize: just hide but keep button visible
       floatingChat.classList.remove('open');
       floatingChat.setAttribute('aria-hidden','true');
       floatToggle.setAttribute('aria-expanded','false');
@@ -313,7 +535,53 @@
     });
 
     // initial greeting
-    setTimeout(()=> appendMessage(fConv, "Hi! I'm your assistant — ready to help 😊", 'bot-msg'), 600);
+    setTimeout(()=> appendMessage(fConv, "Hi — I'm your assistant. Ask me anything!", 'bot-msg'), 450);
+
+    /* Draggable chat: allow dragging by topbar (mouse + touch) */
+    (function makeDraggable(handle, target){
+      let isDown=false, startX=0, startY=0, origRight=20, origBottom=100;
+      // read initial right/bottom
+      const style = getComputedStyle(target);
+      origRight = parseFloat(style.right) || 20;
+      origBottom = parseFloat(style.bottom) || 100;
+
+      function onDown(e){
+        isDown = true;
+        handle.style.cursor = 'grabbing';
+        startX = (e.touches ? e.touches[0].clientX : e.clientX);
+        startY = (e.touches ? e.touches[0].clientY : e.clientY);
+        // store current rect
+        const rect = target.getBoundingClientRect();
+        target._rect = rect;
+      }
+      function onMove(e){
+        if(!isDown) return;
+        const cx = (e.touches ? e.touches[0].clientX : e.clientX);
+        const cy = (e.touches ? e.touches[0].clientY : e.clientY);
+        const dx = cx - startX;
+        const dy = cy - startY;
+        // compute new right/bottom based on movement
+        const newRight = (window.innerWidth - (target._rect.right + dx));
+        const newBottom = (window.innerHeight - (target._rect.bottom + dy));
+        // clamp within viewport
+        const clampedRight = Math.max(8, Math.min(window.innerWidth - 120, newRight));
+        const clampedBottom = Math.max(8, Math.min(window.innerHeight - 120, newBottom));
+        target.style.right = clampedRight + 'px';
+        target.style.bottom = clampedBottom + 'px';
+      }
+      function onUp(){
+        if(!isDown) return;
+        isDown = false;
+        handle.style.cursor = 'grab';
+      }
+      handle.addEventListener('mousedown', onDown);
+      window.addEventListener('mousemove', onMove);
+      window.addEventListener('mouseup', onUp);
+      // touch
+      handle.addEventListener('touchstart', onDown, {passive:true});
+      window.addEventListener('touchmove', onMove, {passive:true});
+      window.addEventListener('touchend', onUp);
+    })(dragHandle, floatingChat);
   </script>
 </body>
 </html>
