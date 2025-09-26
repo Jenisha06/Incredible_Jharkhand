@@ -27,7 +27,42 @@
              <!-- Replace this -->
 <!-- <a href="sos-btn.html" class="sos-button">SOS alert</a> -->
 
-<a href="sms:112?body=🚨 SOS! I need help." class="sos-button">🚨 SOS Alert</a
+<button onclick="sendSOS()" class="sos-button">🚨 SOS Alert</button>
+
+<script>
+  function sendSOS() {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(function(position) {
+        let lat = position.coords.latitude;
+        let lon = position.coords.longitude;
+        let mapsLink = https://www.google.com/maps?q=${lat},${lon};
+        
+        let emergencyNumber = "112"; // replace/add parents’ number if needed
+        let message = 🚨 SOS! I need help. My location: ${mapsLink};
+        
+        // Detect iPhone vs Android
+        let userAgent = navigator.userAgent || navigator.vendor || window.opera;
+        let smsLink = "";
+
+        if (/iPhone|iPad|iPod/i.test(userAgent)) {
+          smsLink = sms:${emergencyNumber}&body=${encodeURIComponent(message)};
+        } else {
+          smsLink = sms:${emergencyNumber}?body=${encodeURIComponent(message)};
+        }
+
+        // Open SMS app with location
+        window.location.href = smsLink;
+      }, function() {
+        // If location denied/unavailable
+        let emergencyNumber = "112";
+        let message = "🚨 SOS! I need help. Location not available.";
+        window.location.href = sms:${emergencyNumber}?body=${encodeURIComponent(message)};
+      });
+    } else {
+      alert("Geolocation not supported on this device.");
+    }
+  }
+</script>
 
             <a href="#login-btn" class="login-btn" data-key="login">Login</a>
         </nav>
@@ -241,6 +276,7 @@
 </body>
 
 </html>
+
 
 
 
