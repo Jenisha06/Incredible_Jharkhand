@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Floating Chatbot Demo</title>
+  <style>
+    :root{
+      --accent:#4a90e2;
+      --chat-width:300px;
+      --chat-height:420px;
+    }
+
+    body{
+      margin:0;
+      font-family: 'Segoe UI', sans-serif;
+      background:#fff;
+      min-height:100vh;
+    }
+
+    /* --- Floating toggle button --- */
+    .float-btn{
+      position:fixed;
+      right:20px;
+      bottom:20px;
+      width:56px;
+      height:56px;
+      border-radius:50%;
+      background:var(--accent);
+      color:white;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      box-shadow:0 8px 20px rgba(0,0,0,0.25);
+      cursor:pointer;
+      z-index:9999;
+      transition:transform .15s;
+    }
+    .float-btn:active{transform:scale(.96)}
+
+    .float-btn .icon{
+      font-weight:700;
+      font-size:20px;
+    }
+
+    /* --- Floating chat window --- */
+    .floating-chat{
+      position:fixed;
+      right:20px;
+      bottom:90px;
+      width:var(--chat-width);
+      height:var(--chat-height);
+      background:white;
+      border-radius:18px;
+      box-shadow:0 10px 30px rgba(0,0,0,0.2);
+      display:flex;
+      flex-direction:column;
+      overflow:hidden;
+      z-index:9998;
+      transform-origin:bottom right;
+    }
+
+    .floating-chat.hidden{display:none}
+
+    .floating-chat .topbar{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      padding:10px 12px;
+      background:var(--accent);
+      color:#fff;
+    }
+    .floating-chat .topbar .title{font-weight:600;font-size:14px}
+    .floating-chat .topbar .controls{display:flex;gap:8px;align-items:center}
+    .floating-chat .topbar button{background:transparent;border:none;color:white;cursor:pointer;font-size:14px}
+
+    .floating-chat #f-conversation{flex:1;padding:10px;overflow:auto;display:flex;flex-direction:column;gap:8px;background:#fafafa;}
+
+    .user-msg{
+      align-self:flex-end;
+      background:#d1eaff;
+      color:#000;
+      padding:8px 12px;
+      border-radius:12px 12px 0 12px;
+      max-width:75%;
+      word-wrap:break-word;
+      font-size:13px;
+    }
+
+    .bot-msg{
+      align-self:flex-start;
+      background:#ffe0e0;
+      color:#000;
+      padding:8px 12px;
+      border-radius:12px 12px 12px 0;
+      max-width:75%;
+      word-wrap:break-word;
+      font-size:13px;
+    }
+
+    .input-area{
+      display:flex;
+      border-top:1px solid #ddd;
+      padding:8px;
+      background:#fff;
+    }
+
+    #f-prompt{
+      flex:1;
+      padding:8px;
+      border-radius:10px;
+      border:1px solid #ccc;
+      font-size:13px;
+      outline:none;
+    }
+
+    #f-send{
+      margin-left:8px;
+      padding:8px 12px;
+      background:var(--accent);
+      color:white;
+      border:none;
+      border-radius:10px;
+      cursor:pointer;
+      font-size:13px;
+    }
+    #f-send:hover{background:#357abd}
+  </style>
+</head>
+
+<body>
+
+  <!-- Floating toggle button -->
+  <div class="float-btn" id="floatToggle" title="Open chat">
+    <div class="icon">💬</div>
+  </div>
+
+  <!-- Floating chat window (hidden initially) -->
+  <div class="floating-chat hidden" id="floatingChat">
+    <div class="topbar">
+      <div class="title">Assistant</div>
+      <div class="controls">
+        <button id="closeBtn" title="Close">×</button>
+      </div>
+    </div>
+    <div id="f-conversation"></div>
+    <div class="input-area">
+      <input type="text" id="f-prompt" placeholder="Ask me...">
+      <button id="f-send">Send</button>
+    </div>
+  </div>
+
+  <script>
+    const API_KEY = "AIzaSyCfGNQLBQNq7AXfvm5AbcpztZDbt72SfLI"; // Replace securely in production
+    const MODEL_ENDPOINT = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent';
+
+    const fPrompt = document.getElementById('f-prompt');
+    const fConv = document.getElementById('f-conversation');
+    const fSend = document.getElementById('f-send');
+    const floatToggle = document.getElementById('floatToggle');
+    const floatingChat = document.getElementById('floatingChat');
+    const closeBtn = document.getElementById('closeBtn');
+
+    function appendMessage(container, text, cls){
+      const el=document.createElement('div');
+      el.className=cls;
+      el.innerText=text;
+      container.appendChild(el);
+      container.scrollTop=container.scrollHeight;
+    }
+
+    function buildRequestPayload(text){
+      return JSON.stringify({contents:[{parts:[{text}]}]});
+    }
+
+    function sendToModel(text,onResult,onError){
+      const myHeaders=new Headers();
+      myHeaders.append('Content-Type','application/json');
+      myHeaders.append('X-goog-api-key',API_KEY);
+      fetch(MODEL_ENDPOINT,{method:'POST',headers:myHeaders,body:buildRequestPayload(text)})
+      .then(r=>r.json())
+      .then(result=>{
+        try{
+          const reply=result.candidates?.[0]?.content?.parts?.[0]?.text||'[no reply]';
+          onResult(reply);
+        }catch(e){onError(e);}
+      })
+      .catch(err=>onError(err));
+    }
+
+    function sendFloatingMsg(){
+      const txt=fPrompt.value.trim();
+      if(!txt)return;
+      appendMessage(fConv,txt,'user-msg');
+      fPrompt.value='';
+      appendMessage(fConv,'...','bot-msg');
+      const placeholder=fConv.lastElementChild;
+      sendToModel(txt,(reply)=>{placeholder.innerText=reply;},(err)=>{
+        placeholder.innerText='Error: '+(err?.message||err);
+      });
+    }
+
+    fSend.addEventListener('click',sendFloatingMsg);
+    fPrompt.addEventListener('keydown',e=>{if(e.key==='Enter')sendFloatingMsg();});
+
+    floatToggle.addEventListener('click',()=>{
+      floatingChat.classList.toggle('hidden');
+      if(!floatingChat.classList.contains('hidden')){
+        fPrompt.focus();
+      }
+    });
+
+    closeBtn.addEventListener('click',()=>{
+      floatingChat.classList.add('hidden');
+    });
+
+    setTimeout(()=>appendMessage(fConv,'Hi! I\'m your assistant.','bot-msg'),600);
+  </script>
+ 
+
+</body>
+</html>
