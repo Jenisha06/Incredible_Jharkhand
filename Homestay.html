@@ -4,7 +4,6 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Hotels & Homestays - Incredible Jharkhand</title>
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -18,8 +17,8 @@
     /* ========== HEADER (UPDATED: smaller, cleaner) ========== */
     .stay-header {
       text-align: center;
-      padding: 1.4rem 1rem;                 /* reduced vertical padding */
-      background: linear-gradient(180deg, #2E8B57 0%, #3aa66b 60%); /* softer top-to-bottom */
+      padding: 1.4rem 1rem;
+      background: linear-gradient(180deg, #2E8B57 0%, #3aa66b 60%);
       color: white;
       position: relative;
       overflow: hidden;
@@ -45,7 +44,7 @@
       margin-bottom: 0.25rem;
       position: relative;
       z-index: 1;
-      font-size: 1.6rem;                    /* smaller headline */
+      font-size: 1.6rem;
       font-weight: 700;
       letter-spacing: -0.3px;
       display: inline-flex;
@@ -53,12 +52,8 @@
       gap: 0.6rem;
     }
 
-    .stay-header h1 i {
-      font-size: 1.05rem;                   /* smaller icon */
-    }
-
     .stay-header p {
-      font-size: 0.95rem;                   /* smaller subtext */
+      font-size: 0.95rem;
       opacity: 0.95;
       margin-top: 6px;
       z-index: 1;
@@ -70,13 +65,12 @@
       to   { opacity: 1; transform: translateY(0); }
     }
 
-    /* ========== FILTERS / LAYOUT (unchanged mostly) ========== */
     .filters {
       display: flex;
       justify-content: center;
       flex-wrap: wrap;
       gap: 1rem;
-      padding: 1.2rem 1rem;                /* slightly reduced padding */
+      padding: 1.2rem 1rem;
       background: rgba(255, 255, 255, 0.95);
       backdrop-filter: blur(10px);
       border-bottom: 1px solid rgba(76, 175, 80, 0.12);
@@ -201,7 +195,7 @@
 
 <body>
   <header class="stay-header">
-    <h1><i class="fa-solid fa-hotel"></i> Hotels & Homestays</h1>
+    <h1>Hotels & Homestays</h1>
     <p>Discover authentic stays and comfortable accommodations across beautiful Jharkhand</p>
   </header>
 
@@ -239,7 +233,7 @@
       </div>
       <div class="stay-info">
         <h3>Ranchi Grand Heritage</h3>
-        <div class="location"><i class="fas fa-map-marker-alt"></i> Ranchi City Center</div>
+        <div class="location">Ranchi City Center</div>
         <div class="rating">
           <div class="stars">★★★★★</div>
           <span class="rating-text">(4.8) 234 reviews</span>
@@ -271,7 +265,7 @@
       </div>
       <div class="stay-info">
         <h3>Netarhat Valley Homestay</h3>
-        <div class="location"><i class="fas fa-map-marker-alt"></i> Netarhat Hills</div>
+        <div class="location">Netarhat Hills</div>
         <div class="rating">
           <div class="stars">★★★★☆</div>
           <span class="rating-text">(4.6) 89 reviews</span>
@@ -294,258 +288,4 @@
 
     <div class="stay-card" data-category="resort luxury">
       <div class="stay-card-image">
-        <img src="https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?w=400" alt="Betla Resort">
-        <div class="image-overlay">
-          <div class="overlay-text">Wildlife adventure awaits</div>
-        </div>
-      </div>
-      <div class="stay-info">
-        <h3>Betla Forest Resort</h3>
-        <div class="location"><i class="fas fa-map-marker-alt"></i> Betla National Park</div>
-        <div class="rating">
-          <div class="stars">★★★★★</div>
-          <span class="rating-text">(4.9) 156 reviews</span>
-        </div>
-        <p>Eco-luxury resort offering wildlife safaris and nature immersion experiences.</p>
-        <div class="amenities">
-          <span class="amenity">Safari Tours</span>
-          <span class="amenity">Nature Walks</span>
-          <span class="amenity">Bonfire</span>
-          <span class="amenity">Organic Food</span>
-        </div>
-        <div class="price-section">
-          <div>
-            <span class="price">₹5,200</span>
-            <div style="font-size: 0.8rem; color: #666;">per night</div>
-          </div>
-          <button onclick="openModal('betla-resort')">View Details</button>
-        </div>
-      </div>
-    </div>
-
-    <div class="stay-card" data-category="hotel luxury">
-      <div class="stay-card-image">
-        <img src="https://images.unsplash.com/photo-1571003123894-1f0594d2b5d9?w=400" alt="Deoghar Hotel">
-        <div class="image-overlay">
-          <div class="overlay-text">Spiritual retreat</div>
-        </div>
-      </div>
-      <div class="stay-info">
-        <h3>Deoghar Spiritual Suites</h3>
-        <div class="location"><i class="fas fa-map-marker-alt"></i> Near Baidyanath Temple</div>
-        <div class="rating">
-          <div class="stars">★★★★☆</div>
-          <span class="rating-text">(4.7) 203 reviews</span>
-        </div>
-        <p>Premium accommodation for pilgrims with temple shuttle and meditation spaces.</p>
-        <div class="amenities">
-          <span class="amenity">Temple Shuttle</span>
-          <span class="amenity">Meditation Hall</span>
-          <span class="amenity">Vegetarian Restaurant</span>
-        </div>
-        <div class="price-section">
-          <div>
-            <span class="price">₹3,800</span>
-            <div style="font-size: 0.8rem; color: #666;">per night</div>
-          </div>
-          <button onclick="openModal('deoghar-suites')">View Details</button>
-        </div>
-      </div>
-    </div>
-
-    <div class="stay-card" data-category="homestay budget">
-      <div class="stay-card-image">
-        <img src="https://images.unsplash.com/photo-1502672260266-1c1ef2d93688?w=400" alt="Jamshedpur Stay">
-        <div class="image-overlay">
-          <div class="overlay-text">Urban comfort</div>
-        </div>
-      </div>
-      <div class="stay-info">
-        <h3>Steel City Homestay</h3>
-        <div class="location"><i class="fas fa-map-marker-alt"></i> Jamshedpur</div>
-        <div class="rating">
-          <div class="stars">★★★★☆</div>
-          <span class="rating-text">(4.5) 67 reviews</span>
-        </div>
-        <p>Comfortable urban homestay with easy access to Jamshedpur's attractions.</p>
-        <div class="amenities">
-          <span class="amenity">City Tours</span>
-          <span class="amenity">Local Cuisine</span>
-          <span class="amenity">Airport Pickup</span>
-        </div>
-        <div class="price-section">
-          <div>
-            <span class="price">₹2,200</span>
-            <div style="font-size: 0.8rem; color: #666;">per night</div>
-          </div>
-          <button onclick="openModal('steel-city-homestay')">View Details</button>
-        </div>
-      </div>
-    </div>
-
-    <div class="stay-card" data-category="resort hotel">
-      <div class="stay-card-image">
-        <img src="https://images.unsplash.com/photo-1587061949409-02df41d5e562?w=400" alt="Hazaribagh Resort">
-        <div class="image-overlay">
-          <div class="overlay-text">Lake view paradise</div>
-        </div>
-      </div>
-      <div class="stay-info">
-        <h3>Hazaribagh Lake Resort</h3>
-        <div class="location"><i class="fas fa-map-marker-alt"></i> Hazaribagh Wildlife Sanctuary</div>
-        <div class="rating">
-          <div class="stars">★★★★★</div>
-          <span class="rating-text">(4.8) 134 reviews</span>
-        </div>
-        <p>Lakeside resort perfect for nature lovers with boating and bird watching.</p>
-        <div class="amenities">
-          <span class="amenity">Lake View</span>
-          <span class="amenity">Boating</span>
-          <span class="amenity">Bird Watching</span>
-          <span class="amenity">Conference Hall</span>
-        </div>
-        <div class="price-section">
-          <div>
-            <span class="price">₹4,800</span>
-            <div style="font-size: 0.8rem; color: #666;">per night</div>
-          </div>
-          <button onclick="openModal('hazaribagh-resort')">View Details</button>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- Modal -->
-  <div class="modal" id="stayModal">
-    <div class="modal-content">
-      <button class="close-modal" onclick="closeModal()">&times;</button>
-      <div id="modalContent"></div>
-    </div>
-  </div>
-
-  <script>
-    // Filter functionality
-    const filterButtons = document.querySelectorAll('.filters button');
-    const stayCards = document.querySelectorAll('.stay-card');
-    const totalStaysElement = document.getElementById('totalStays');
-
-    filterButtons.forEach(button => {
-      button.addEventListener('click', () => {
-        // Remove active class from all buttons
-        filterButtons.forEach(btn => btn.classList.remove('active'));
-        // Add active class to clicked button
-        button.classList.add('active');
-
-        const filter = button.getAttribute('data-filter');
-        let visibleCount = 0;
-
-        stayCards.forEach(card => {
-          if (filter === 'all' || card.getAttribute('data-category').includes(filter)) {
-            card.style.display = 'block';
-            card.style.animation = 'fadeInUp 0.5s ease-out';
-            visibleCount++;
-          } else {
-            card.style.display = 'none';
-          }
-        });
-
-        // Update stats
-        totalStaysElement.textContent = visibleCount + '+';
-      });
-    });
-
-    // Modal functionality
-    function openModal(stayId) {
-      const modal = document.getElementById('stayModal');
-      const modalContent = document.getElementById('modalContent');
-
-      // Sample modal content - you can expand this with real data
-      const stayData = {
-        'ranchi-heritage': {
-          title: 'Ranchi Grand Heritage',
-          images: ['https://images.unsplash.com/photo-1566073771259-6a8506099945?w=600'],
-          description: 'Experience luxury at its finest in the heart of Ranchi. Our heritage hotel combines traditional architecture with modern amenities.',
-          amenities: ['Free WiFi', 'Spa & Wellness', 'Multi-cuisine Restaurant', 'Swimming Pool', 'Business Center', '24/7 Room Service'],
-          price: '₹4,500',
-          availability: 'Available for next 30 days'
-        }
-        // Add more stay data as needed
-      };
-
-      const stay = stayData[stayId] || {
-        title: 'Stay Details',
-        description: 'Detailed information about this accommodation.',
-        amenities: ['WiFi', 'Restaurant', 'Room Service'],
-        price: '₹2,500',
-        availability: 'Available'
-      };
-
-      modalContent.innerHTML = `
-        <h2>${stay.title}</h2>
-        <div style="margin: 1rem 0;">
-          <img src="${stay.images ? stay.images[0] : 'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=600'}"
-               style="width: 100%; height: 200px; object-fit: cover; border-radius: 10px;">
-        </div>
-        <p style="line-height: 1.6; margin: 1rem 0;">${stay.description}</p>
-        <div class="availability">
-          <strong>Availability:</strong> ${stay.availability}
-        </div>
-        <h4>Amenities:</h4>
-        <div class="amenities" style="margin: 1rem 0;">
-          ${stay.amenities.map(amenity => `<span class="amenity">${amenity}</span>`).join('')}
-        </div>
-        <div style="font-size: 1.2rem; color: #4CAF50; font-weight: bold; margin: 1rem 0;">
-          ${stay.price} per night
-        </div>
-        <button class="book-now-btn" onclick="bookNow('${stayId}')">
-          <i class="fas fa-calendar-check"></i> Book Now
-        </button>
-      `;
-
-      modal.style.display = 'block';
-      document.body.style.overflow = 'hidden';
-    }
-
-    function closeModal() {
-      const modal = document.getElementById('stayModal');
-      modal.style.display = 'none';
-      document.body.style.overflow = 'auto';
-    }
-
-    function bookNow(stayId) {
-      alert('Redirecting to booking page for ' + stayId + '...\n\nThis would integrate with your booking system.');
-      // Here you would integrate with your actual booking system
-    }
-
-    // Close modal when clicking outside
-    document.getElementById('stayModal').addEventListener('click', (e) => {
-      if (e.target.id === 'stayModal') {
-        closeModal();
-      }
-    });
-
-    // Add some interactive animations on scroll
-    const observerOptions = {
-      threshold: 0.1,
-      rootMargin: '0px 0px -50px 0px'
-    };
-
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          entry.target.style.opacity = '1';
-          entry.target.style.transform = 'translateY(0)';
-        }
-      });
-    }, observerOptions);
-
-    // Observe all stay cards for animation
-    stayCards.forEach(card => {
-      card.style.opacity = '0';
-      card.style.transform = 'translateY(30px)';
-      card.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
-      observer.observe(card);
-    });
-  </script>
-</body>
-</html>
+        <img src
