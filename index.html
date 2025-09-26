@@ -30,6 +30,7 @@
 <button onclick="sendSOS()" class="sos-button">🚨 SOS Alert</button>
 
 <script>
+ <script>
   function sendSOS() {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(function(position) {
@@ -62,6 +63,7 @@
       alert("Geolocation not supported on this device.");
     }
   }
+</script>
 </script>
 
             <a href="#login-btn" class="login-btn" data-key="login">Login</a>
@@ -276,6 +278,7 @@
 </body>
 
 </html>
+
 
 
 
