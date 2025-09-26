@@ -3,45 +3,20 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Floating Chatbot Demo</title>
+  <title>Floating Chatbot Demo — Green Theme</title>
   <style>
     :root{
-      --accent: #4a90e2;
-        /* Topbar */
-   .floating-chat .topbar{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  padding:12px 16px;
-  background:linear-gradient(135deg, #4a90e2, #357abd);
-  color:#fff;
-  border-top-left-radius:14px;
-  border-top-right-radius:14px;
-  box-shadow: inset 0 -1px 0 rgba(255,255,255,0.2);
-}
+      /* Theme & sizing */
+      --accent: #4CAF50;         /* primary green */
+      --accent-dark: #388E3C;    /* darker green for hover/gradient */
+      --accent-soft: #E8F5E9;    /* user bubble */
+      --bot-soft: #F1F8E9;       /* bot bubble */
+      --white: #ffffff;
 
-.floating-chat .topbar .title{
-  font-weight:600;
-  font-size:15px;
-  letter-spacing:0.3px;
-}
-
-.floating-chat .topbar .controls button{
-  background:rgba(255,255,255,0.2);
-  border:none;
-  color:white;
-  cursor:pointer;
-  font-size:14px;
-  width:24px;
-  height:24px;
-  border-radius:50%;
-  transition: background 0.2s;
-}
-
-.floating-chat .topbar .controls button:hover{
-  background:rgba(255,255,255,0.35);
-}
-
+      /* Chat size (adjust these numbers if you want even bigger) */
+      --chat-width: 420px;
+      --chat-height: 560px;
+    }
 
     /* reset for this widget only (help avoid site CSS conflicts) */
     .chat-widget, .chat-widget * { box-sizing: border-box; }
@@ -58,33 +33,34 @@
       position:fixed;
       right:20px;
       bottom:20px;
-      width:56px;
-      height:56px;
+      width:64px;
+      height:64px;
       border-radius:50%;
       background:var(--accent);
       color:white;
       display:flex;
       align-items:center;
       justify-content:center;
-      box-shadow:0 8px 20px rgba(0,0,0,0.25);
+      box-shadow:0 12px 30px rgba(0,0,0,0.22);
       cursor:pointer;
       z-index:2147483646; /* very high */
-      transition:transform .15s;
+      transition:transform .15s, box-shadow .15s;
     }
     .float-btn:active{ transform:scale(.96); }
-    .float-btn .icon{ font-weight:700; font-size:20px; }
+    .float-btn:hover{ box-shadow:0 18px 38px rgba(0,0,0,0.28); }
+    .float-btn .icon{ font-weight:700; font-size:22px; line-height:1; }
 
     /* Floating chat window (hidden by default via opacity/visibility) */
     .floating-chat{
       position:fixed;
       right:20px;
-      bottom:90px;
+      bottom:96px;
       width:var(--chat-width);
-      max-height:70vh;
+      max-height:82vh;
       height:var(--chat-height);
       background:var(--white);
       border-radius:14px;
-      box-shadow:0 12px 36px rgba(0,0,0,0.25);
+      box-shadow:0 20px 48px rgba(0,0,0,0.22);
       display:flex;
       flex-direction:column;
       overflow:hidden;
@@ -95,6 +71,7 @@
       transform: translateY(14px) scale(.98);
       visibility:hidden;
       pointer-events:none;
+      border: 1px solid rgba(0,0,0,0.04);
     }
 
     /* visible state */
@@ -110,51 +87,67 @@
       display:flex;
       align-items:center;
       justify-content:space-between;
-      padding:10px 12px;
-      background:var(--accent);
+      padding:12px 14px;
+      background: linear-gradient(135deg, var(--accent), var(--accent-dark));
       color:var(--white);
+      border-top-left-radius:14px;
+      border-top-right-radius:14px;
+      box-shadow: inset 0 -1px 0 rgba(255,255,255,0.12);
     }
-    .floating-chat .topbar .title{ font-weight:600; font-size:14px; }
+    .floating-chat .topbar .title{ font-weight:600; font-size:15px; letter-spacing:0.2px; }
     .floating-chat .topbar .controls{ display:flex; gap:8px; align-items:center; }
     .floating-chat .topbar button{
-      background:transparent; border:none; color:var(--white);
-      cursor:pointer; font-size:18px; line-height:1;
+      background:rgba(255,255,255,0.18);
+      border:none;
+      color:var(--white);
+      cursor:pointer;
+      font-size:16px;
+      width:30px;
+      height:30px;
+      border-radius:50%;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      transition: background .15s;
+    }
+    .floating-chat .topbar button:hover{
+      background:rgba(255,255,255,0.3);
     }
 
     /* Conversation area */
     #f-conversation{
       flex:1;
-      padding:12px;
+      padding:16px;
       overflow:auto;
       display:flex;
       flex-direction:column;
-      gap:10px;
-      background:#fafafa;
+      gap:12px;
+      background: #fbfff9; /* very light green/white */
     }
 
     .user-msg{
       align-self:flex-end;
-      background:#d1eaff;
-      color:#000;
-      padding:8px 12px;
-      border-radius:12px 12px 0 12px;
+      background: var(--accent-soft);
+      color:#06270a;
+      padding:10px 14px;
+      border-radius:14px 14px 4px 14px;
       max-width:78%;
       word-wrap:break-word;
-      font-size:13px;
-      line-height:1.3;
+      font-size:14px;
+      line-height:1.4;
       box-shadow: 0 1px 0 rgba(0,0,0,0.04);
     }
 
     .bot-msg{
       align-self:flex-start;
-      background:#fff4f0;
-      color:#000;
-      padding:8px 12px;
-      border-radius:12px 12px 12px 0;
+      background: var(--bot-soft);
+      color:#113008;
+      padding:10px 14px;
+      border-radius:14px 14px 14px 4px;
       max-width:78%;
       word-wrap:break-word;
-      font-size:13px;
-      line-height:1.3;
+      font-size:14px;
+      line-height:1.4;
       box-shadow: 0 1px 0 rgba(0,0,0,0.04);
     }
 
@@ -162,63 +155,73 @@
     .input-area{
       display:flex;
       gap:8px;
-      padding:8px;
-      border-top:1px solid #eee;
+      padding:12px;
+      border-top:1px solid rgba(0,0,0,0.05);
       background:#fff;
       align-items:center;
     }
 
     #f-prompt{
       flex:1;
-      padding:9px;
-      border-radius:10px;
-      border:1px solid #ddd;
-      font-size:13px;
+      padding:10px;
+      border-radius:12px;
+      border:1px solid #e6eee6;
+      font-size:14px;
       outline:none;
+      background: #fcfff8;
+      transition: box-shadow .12s, border-color .12s;
+    }
+    #f-prompt:focus{
+      box-shadow: 0 6px 18px rgba(60,120,60,0.08);
+      border-color: var(--accent);
     }
 
     #f-send{
-      padding:8px 12px;
+      padding:9px 14px;
       background:var(--accent);
       color:white;
       border:none;
-      border-radius:10px;
+      border-radius:12px;
       cursor:pointer;
-      font-size:13px;
+      font-size:14px;
+      box-shadow: 0 8px 20px rgba(60,120,60,0.12);
+      transition: background .12s, transform .08s;
     }
-    #f-send:hover{ background:#357abd; }
+    #f-send:hover{ background:var(--accent-dark); transform: translateY(-1px); }
+    #f-send:active{ transform: translateY(0); }
 
     /* small screens tweak */
     @media (max-width:420px){
-      :root{ --chat-width: 92vw; --chat-height: 64vh; }
-      .float-btn{ right:12px; bottom:12px; width:52px; height:52px; }
-      .floating-chat{ right:12px; bottom:72px; }
+      :root{ --chat-width: 92vw; --chat-height: 70vh; }
+      .float-btn{ right:12px; bottom:12px; width:56px; height:56px; }
+      .floating-chat{ right:12px; bottom:80px; }
     }
   </style>
 </head>
 <body>
 
-  <div class="chat-widget">
+  <div class="chat-widget" aria-hidden="false">
     <!-- Floating toggle button -->
-    <div class="float-btn" id="floatToggle" title="Open chat">
-      <div class="icon">💬</div>
-    </div>
+    <button class="float-btn" id="floatToggle" title="Open chat" aria-expanded="false" aria-controls="floatingChat">
+      <span class="icon" aria-hidden="true">💬</span>
+      <span class="sr-only" style="position:absolute;left:-9999px;top:auto;width:1px;height:1px;overflow:hidden;">Open chat</span>
+    </button>
 
     <!-- Floating chat window -->
     <div class="floating-chat" id="floatingChat" role="dialog" aria-hidden="true" aria-label="Chat assistant">
       <div class="topbar">
         <div class="title">Assistant</div>
-        <div class="controls">
-          <button id="minBtn" title="Minimize">─</button>
-          <button id="closeBtn" title="Close">×</button>
+        <div class="controls" role="group" aria-label="Window controls">
+          <button id="minBtn" title="Minimize" aria-label="Minimize">─</button>
+          <button id="closeBtn" title="Close" aria-label="Close">×</button>
         </div>
       </div>
 
-      <div id="f-conversation" aria-live="polite"></div>
+      <div id="f-conversation" aria-live="polite" aria-atomic="false"></div>
 
       <div class="input-area">
         <input type="text" id="f-prompt" placeholder="Ask me..." aria-label="Chat input" />
-        <button id="f-send">Send</button>
+        <button id="f-send" aria-label="Send message">Send</button>
       </div>
     </div>
   </div>
@@ -285,26 +288,32 @@
       if(opening){
         floatingChat.classList.add('open');
         floatingChat.setAttribute('aria-hidden','false');
+        floatToggle.setAttribute('aria-expanded','true');
         fPrompt.focus();
       } else {
         floatingChat.classList.remove('open');
         floatingChat.setAttribute('aria-hidden','true');
+        floatToggle.setAttribute('aria-expanded','false');
       }
     });
 
     closeBtn.addEventListener('click', () => {
       floatingChat.classList.remove('open');
       floatingChat.setAttribute('aria-hidden','true');
+      floatToggle.setAttribute('aria-expanded','false');
+      floatToggle.focus();
     });
 
     minBtn.addEventListener('click', () => {
       // minimize: just hide but keep button visible
       floatingChat.classList.remove('open');
       floatingChat.setAttribute('aria-hidden','true');
+      floatToggle.setAttribute('aria-expanded','false');
+      floatToggle.focus();
     });
 
     // initial greeting
-    setTimeout(()=> appendMessage(fConv, "Hi! I'm your assistant.", 'bot-msg'), 600);
+    setTimeout(()=> appendMessage(fConv, "Hi! I'm your assistant — ready to help 😊", 'bot-msg'), 600);
   </script>
 </body>
 </html>
