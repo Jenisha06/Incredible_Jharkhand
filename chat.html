@@ -1,24 +1,28 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Floating Chatbot Demo</title>
   <style>
     :root{
-      --accent:#4a90e2;
-      --chat-width:300px;
-      --chat-height:500px;
+      --accent: #4a90e2;
+      --chat-width: 340px;
+      --chat-height: 520px;
+      --white: #ffffff;
     }
 
-  body{
-  margin:0;
-  font-family: 'Segoe UI', sans-serif;
-  background:transparent; 
-  min-height:100vh;
-}
+    /* reset for this widget only (help avoid site CSS conflicts) */
+    .chat-widget, .chat-widget * { box-sizing: border-box; }
 
-    /* --- Floating toggle button --- */
+    body{
+      margin:0;
+      font-family: 'Segoe UI', Arial, sans-serif;
+      background: transparent;
+      min-height:100vh;
+    }
+
+    /* Floating toggle button */
     .float-btn{
       position:fixed;
       right:20px;
@@ -33,48 +37,69 @@
       justify-content:center;
       box-shadow:0 8px 20px rgba(0,0,0,0.25);
       cursor:pointer;
-      z-index:9999;
+      z-index:2147483646; /* very high */
       transition:transform .15s;
     }
-    .float-btn:active{transform:scale(.96)}
+    .float-btn:active{ transform:scale(.96); }
+    .float-btn .icon{ font-weight:700; font-size:20px; }
 
-    .float-btn .icon{
-      font-weight:700;
-      font-size:20px;
-    }
-
-    /* --- Floating chat window --- */
+    /* Floating chat window (hidden by default via opacity/visibility) */
     .floating-chat{
       position:fixed;
       right:20px;
       bottom:90px;
       width:var(--chat-width);
+      max-height:70vh;
       height:var(--chat-height);
-      background:white;
-      border-radius:18px;
-      box-shadow:0 10px 30px rgba(0,0,0,0.2);
+      background:var(--white);
+      border-radius:14px;
+      box-shadow:0 12px 36px rgba(0,0,0,0.25);
       display:flex;
       flex-direction:column;
       overflow:hidden;
-      z-index:9998;
+      z-index:2147483645;
       transform-origin:bottom right;
+      transition: opacity .18s ease, transform .18s ease, visibility .18s;
+      opacity:0;
+      transform: translateY(14px) scale(.98);
+      visibility:hidden;
+      pointer-events:none;
     }
 
-    .floating-chat.hidden{display:none}
+    /* visible state */
+    .floating-chat.open{
+      opacity:1;
+      transform: translateY(0) scale(1);
+      visibility:visible;
+      pointer-events:auto;
+    }
 
+    /* Topbar */
     .floating-chat .topbar{
       display:flex;
       align-items:center;
       justify-content:space-between;
       padding:10px 12px;
       background:var(--accent);
-      color:#fff;
+      color:var(--white);
     }
-    .floating-chat .topbar .title{font-weight:600;font-size:14px}
-    .floating-chat .topbar .controls{display:flex;gap:8px;align-items:center}
-    .floating-chat .topbar button{background:transparent;border:none;color:white;cursor:pointer;font-size:14px}
+    .floating-chat .topbar .title{ font-weight:600; font-size:14px; }
+    .floating-chat .topbar .controls{ display:flex; gap:8px; align-items:center; }
+    .floating-chat .topbar button{
+      background:transparent; border:none; color:var(--white);
+      cursor:pointer; font-size:18px; line-height:1;
+    }
 
-    .floating-chat #f-conversation{flex:1;padding:10px;overflow:auto;display:flex;flex-direction:column;gap:8px;background:#fafafa;}
+    /* Conversation area */
+    #f-conversation{
+      flex:1;
+      padding:12px;
+      overflow:auto;
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+      background:#fafafa;
+    }
 
     .user-msg{
       align-self:flex-end;
@@ -82,40 +107,46 @@
       color:#000;
       padding:8px 12px;
       border-radius:12px 12px 0 12px;
-      max-width:75%;
+      max-width:78%;
       word-wrap:break-word;
       font-size:13px;
+      line-height:1.3;
+      box-shadow: 0 1px 0 rgba(0,0,0,0.04);
     }
 
     .bot-msg{
       align-self:flex-start;
-      background:#ffe0e0;
+      background:#fff4f0;
       color:#000;
       padding:8px 12px;
       border-radius:12px 12px 12px 0;
-      max-width:75%;
+      max-width:78%;
       word-wrap:break-word;
       font-size:13px;
+      line-height:1.3;
+      box-shadow: 0 1px 0 rgba(0,0,0,0.04);
     }
 
+    /* Input area */
     .input-area{
       display:flex;
-      border-top:1px solid #ddd;
+      gap:8px;
       padding:8px;
+      border-top:1px solid #eee;
       background:#fff;
+      align-items:center;
     }
 
     #f-prompt{
       flex:1;
-      padding:8px;
+      padding:9px;
       border-radius:10px;
-      border:1px solid #ccc;
+      border:1px solid #ddd;
       font-size:13px;
       outline:none;
     }
 
     #f-send{
-      margin-left:8px;
       padding:8px 12px;
       background:var(--accent);
       color:white;
@@ -124,34 +155,45 @@
       cursor:pointer;
       font-size:13px;
     }
-    #f-send:hover{background:#357abd}
+    #f-send:hover{ background:#357abd; }
+
+    /* small screens tweak */
+    @media (max-width:420px){
+      :root{ --chat-width: 92vw; --chat-height: 64vh; }
+      .float-btn{ right:12px; bottom:12px; width:52px; height:52px; }
+      .floating-chat{ right:12px; bottom:72px; }
+    }
   </style>
 </head>
-
 <body>
 
-  <!-- Floating toggle button -->
-  <div class="float-btn" id="floatToggle" title="Open chat">
-    <div class="icon">💬</div>
-  </div>
-
-  <!-- Floating chat window (hidden initially) -->
-  <div class="floating-chat hidden" id="floatingChat">
-    <div class="topbar">
-      <div class="title">Assistant</div>
-      <div class="controls">
-        <button id="closeBtn" title="Close">×</button>
-      </div>
+  <div class="chat-widget">
+    <!-- Floating toggle button -->
+    <div class="float-btn" id="floatToggle" title="Open chat">
+      <div class="icon">💬</div>
     </div>
-    <div id="f-conversation"></div>
-    <div class="input-area">
-      <input type="text" id="f-prompt" placeholder="Ask me...">
-      <button id="f-send">Send</button>
+
+    <!-- Floating chat window -->
+    <div class="floating-chat" id="floatingChat" role="dialog" aria-hidden="true" aria-label="Chat assistant">
+      <div class="topbar">
+        <div class="title">Assistant</div>
+        <div class="controls">
+          <button id="minBtn" title="Minimize">─</button>
+          <button id="closeBtn" title="Close">×</button>
+        </div>
+      </div>
+
+      <div id="f-conversation" aria-live="polite"></div>
+
+      <div class="input-area">
+        <input type="text" id="f-prompt" placeholder="Ask me..." aria-label="Chat input" />
+        <button id="f-send">Send</button>
+      </div>
     </div>
   </div>
 
   <script>
-    const API_KEY = "AIzaSyCfGNQLBQNq7AXfvm5AbcpztZDbt72SfLI"; // Replace securely in production
+    const API_KEY = "AIzaSyCfGNQLBQNq7AXfvm5AbcpztZDbt72SfLI"; // secure this in prod
     const MODEL_ENDPOINT = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent';
 
     const fPrompt = document.getElementById('f-prompt');
@@ -160,13 +202,14 @@
     const floatToggle = document.getElementById('floatToggle');
     const floatingChat = document.getElementById('floatingChat');
     const closeBtn = document.getElementById('closeBtn');
+    const minBtn = document.getElementById('minBtn');
 
     function appendMessage(container, text, cls){
-      const el=document.createElement('div');
-      el.className=cls;
-      el.innerText=text;
+      const el = document.createElement('div');
+      el.className = cls;
+      el.textContent = text;
       container.appendChild(el);
-      container.scrollTop=container.scrollHeight;
+      container.scrollTop = container.scrollHeight;
     }
 
     function buildRequestPayload(text){
@@ -174,49 +217,63 @@
     }
 
     function sendToModel(text,onResult,onError){
-      const myHeaders=new Headers();
+      const myHeaders = new Headers();
       myHeaders.append('Content-Type','application/json');
-      myHeaders.append('X-goog-api-key',API_KEY);
-      fetch(MODEL_ENDPOINT,{method:'POST',headers:myHeaders,body:buildRequestPayload(text)})
+      myHeaders.append('X-goog-api-key', API_KEY);
+      fetch(MODEL_ENDPOINT, { method:'POST', headers: myHeaders, body: buildRequestPayload(text) })
       .then(r=>r.json())
       .then(result=>{
         try{
-          const reply=result.candidates?.[0]?.content?.parts?.[0]?.text||'[no reply]';
+          const reply = result.candidates?.[0]?.content?.parts?.[0]?.text || '[no reply]';
           onResult(reply);
-        }catch(e){onError(e);}
+        } catch(e){ onError(e); }
       })
-      .catch(err=>onError(err));
+      .catch(err=> onError(err));
     }
 
     function sendFloatingMsg(){
-      const txt=fPrompt.value.trim();
-      if(!txt)return;
-      appendMessage(fConv,txt,'user-msg');
-      fPrompt.value='';
-      appendMessage(fConv,'...','bot-msg');
-      const placeholder=fConv.lastElementChild;
-      sendToModel(txt,(reply)=>{placeholder.innerText=reply;},(err)=>{
-        placeholder.innerText='Error: '+(err?.message||err);
+      const txt = fPrompt.value.trim();
+      if(!txt) return;
+      appendMessage(fConv, txt, 'user-msg');
+      fPrompt.value = '';
+      // placeholder bot message shows loading
+      appendMessage(fConv, '...', 'bot-msg');
+      const placeholder = fConv.lastElementChild;
+      sendToModel(txt, (reply) => {
+        placeholder.textContent = reply;
+      }, (err) => {
+        placeholder.textContent = 'Error: ' + (err?.message || err);
       });
     }
 
-    fSend.addEventListener('click',sendFloatingMsg);
-    fPrompt.addEventListener('keydown',e=>{if(e.key==='Enter')sendFloatingMsg();});
+    fSend.addEventListener('click', sendFloatingMsg);
+    fPrompt.addEventListener('keydown', e => { if(e.key === 'Enter') sendFloatingMsg(); });
 
-    floatToggle.addEventListener('click',()=>{
-      floatingChat.classList.toggle('hidden');
-      if(!floatingChat.classList.contains('hidden')){
+    floatToggle.addEventListener('click', () => {
+      const opening = !floatingChat.classList.contains('open');
+      if(opening){
+        floatingChat.classList.add('open');
+        floatingChat.setAttribute('aria-hidden','false');
         fPrompt.focus();
+      } else {
+        floatingChat.classList.remove('open');
+        floatingChat.setAttribute('aria-hidden','true');
       }
     });
 
-    closeBtn.addEventListener('click',()=>{
-      floatingChat.classList.add('hidden');
+    closeBtn.addEventListener('click', () => {
+      floatingChat.classList.remove('open');
+      floatingChat.setAttribute('aria-hidden','true');
     });
 
-    setTimeout(()=>appendMessage(fConv,'Hi! I\'m your assistant.','bot-msg'),600);
-  </script>
- 
+    minBtn.addEventListener('click', () => {
+      // minimize: just hide but keep button visible
+      floatingChat.classList.remove('open');
+      floatingChat.setAttribute('aria-hidden','true');
+    });
 
+    // initial greeting
+    setTimeout(()=> appendMessage(fConv, "Hi! I'm your assistant.", 'bot-msg'), 600);
+  </script>
 </body>
 </html>
