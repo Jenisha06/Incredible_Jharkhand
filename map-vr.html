@@ -1,189 +1,212 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Map → 360 Viewer — Incredible Jharkhand</title>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Map → Reliable 360 Viewer (VR-ready)</title>
 
-  <!-- Leaflet -->
-  <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
-  <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+<!-- Leaflet -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 
-  <!-- A-Frame -->
-  <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
+<!-- A-Frame -->
+<script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
 
-  <style>
-    html,body { height:100%; margin:0; font-family: system-ui, Arial; }
-    #map { width:100%; height:100vh; }
-    /* Fullscreen modal for 360 viewer */
-    .viewer-modal {
-      display:none;
-      position:fixed;
-      inset:0;
-      background:rgba(0,0,0,0.85);
-      z-index:9999;
-      align-items:stretch;
-      justify-content:center;
-      flex-direction:column;
-    }
-    .viewer-top {
-      display:flex;
-      gap:12px;
-      padding:10px;
-      align-items:center;
-      background: linear-gradient(180deg, rgba(0,0,0,0.4), transparent);
-      color:#fff;
-    }
-    .viewer-top .title { font-weight:700; font-size:18px; }
-    .viewer-top .close-btn {
-      margin-left:auto;
-      background:rgba(255,255,255,0.08);
-      color:#fff;
-      border:none;
-      padding:8px 12px;
-      border-radius:8px;
-      cursor:pointer;
-    }
-    .viewer-scene { flex:1; min-height:0; } /* a-scene will fill */
-    a-scene { width:100%; height:100%; display:block; }
-    /* small note */
-    .viewer-footer {
-      padding:8px 12px;
-      color:#ddd;
-      background: linear-gradient(0deg, rgba(0,0,0,0.35), transparent);
-      font-size:14px;
-    }
-  </style>
+<style>
+  html,body { height:100%; margin:0; font-family:system-ui, Arial; }
+  .container { display:flex; height:100vh; gap:0; }
+  #map { width:50%; min-width:320px; height:100%; }
+  .viewer { width:50%; min-width:320px; height:100%; background:#000; display:flex; flex-direction:column; }
+  .topbar { padding:10px; display:flex; gap:8px; align-items:center; color:#fff; background: linear-gradient(180deg, rgba(0,0,0,.45), transparent); z-index:5; }
+  .title { font-weight:700; }
+  .controls { margin-left:auto; display:flex; gap:8px; }
+  .btn { background:rgba(255,255,255,0.08); color:#fff; border:1px solid rgba(255,255,255,0.1); padding:8px 10px; border-radius:8px; cursor:pointer; font-size:14px; }
+  .thumbs { display:flex; gap:8px; padding:10px; overflow:auto; background: linear-gradient(180deg, rgba(0,0,0,.25), transparent); }
+  .thumb { width:96px; height:56px; object-fit:cover; border-radius:8px; cursor:pointer; border:2px solid rgba(255,255,255,0.06); }
+  .thumb.active { outline:3px solid #3db56b; }
+  .info { color:#ddd; padding:8px 12px; font-size:14px; background: linear-gradient(0deg, rgba(0,0,0,.15), transparent); display:flex; align-items:center; gap:12px; }
+  .scene { flex:1; position:relative; }
+  a-scene { width:100%; height:100%; display:block; }
+  .loader {
+    position:absolute; left:50%; top:50%; transform:translate(-50%,-50%); color:#fff;
+    background:rgba(0,0,0,0.45); padding:12px 16px; border-radius:10px; font-weight:600;
+  }
+  .error {
+    position:absolute; left:50%; top:50%; transform:translate(-50%,-50%); color:#fff;
+    background:#b43; padding:12px 16px; border-radius:10px;
+  }
+  @media(max-width:900px) { .container{ flex-direction:column } #map,.viewer{ width:100%; height:50vh } }
+</style>
 </head>
 <body>
 
-  <div id="map" aria-label="Interactive map"></div>
+<div class="container">
+  <div id="map" aria-label="Map"></div>
 
-  <!-- Fullscreen 360 viewer modal -->
-  <div id="viewer" class="viewer-modal" role="dialog" aria-hidden="true">
-    <div class="viewer-top">
-      <div class="title" id="viewerTitle">360° View</div>
-      <button id="enterVr" class="close-btn" title="Enter VR">Enter VR</button>
-      <button id="closeViewer" class="close-btn">Close</button>
+  <div class="viewer" aria-label="360 viewer">
+    <div class="topbar">
+      <div class="title" id="vTitle">360° Preview</div>
+      <div class="controls">
+        <button id="enterVr" class="btn" title="Enter VR (if supported)">Enter VR</button>
+        <button id="arInfo" class="btn" title="AR info">AR Info</button>
+      </div>
     </div>
 
-    <div class="viewer-scene">
-      <!-- Embedded A-Frame scene; sky src will be swapped dynamically -->
-      <a-scene embedded id="aframeViewer" vr-mode-ui="enabled: true">
+    <div class="thumbs" id="thumbs" aria-hidden="false"></div>
+
+    <div class="info">
+      <div id="vDesc">Click a map marker or thumbnail to load a panorama.</div>
+      <div style="margin-left:auto"><a id="vLink" href="#" target="_blank" style="color:#bdf7c9">View More</a></div>
+    </div>
+
+    <div class="scene">
+      <div id="loader" class="loader" style="display:none">Loading 360…</div>
+      <div id="err" class="error" style="display:none">Image failed to load — check file/URL.</div>
+
+      <a-scene embedded id="scene" vr-mode-ui="enabled: true">
         <a-entity camera look-controls position="0 1.6 0">
-          <a-entity cursor="rayOrigin: mouse" position="0 0 -1" geometry="primitive: ring; radiusInner: .01; radiusOuter: .02" material="color: #fff"></a-entity>
+          <a-entity cursor="rayOrigin: mouse" position="0 0 -1" geometry="primitive:ring; radiusInner:.01; radiusOuter:.02" material="color:#fff"></a-entity>
         </a-entity>
-        <a-sky id="viewerSky" src="" rotation="0 -90 0"></a-sky>
+
+        <!-- initial sky will be set by JS; use placeholder initially -->
+        <a-sky id="sky" src="" rotation="0 -90 0"></a-sky>
       </a-scene>
     </div>
-
-    <div class="viewer-footer">
-      <span id="viewerDesc">Loading...</span>
-    </div>
   </div>
+</div>
 
-  <script>
-    // ------- CONFIG: replace these images with your equirectangular 360 images -------
-    const spots = [
-      { id:'netarhat', name:'Netarhat', coords:[23.471,84.267], img360:'netarhat-360.jpg', desc:'Netarhat — hill station famous for sunrise.' , link:'/destinations/netarhat' },
-      { id:'betla', name:'Betla National Park', coords:[23.847,84.217], img360:'betla-360.jpg', desc:'Betla — wildlife safaris and forests.', link:'/destinations/betla' },
-      { id:'hundru', name:'Hundru Falls', coords:[23.369,85.415], img360:'hundru-360.jpg', desc:'Hundru Falls — dramatic waterfall views.', link:'/destinations/hundru-falls' },
-      { id:'deoghar', name:'Deoghar', coords:[24.48,86.7], img360:'deoghar-360.jpg', desc:'Deoghar — spiritual pilgrimage hub.', link:'/destinations/deoghar' }
-    ];
-    // ----------------------------------------------------------------------------------
+<script>
+/* ------------- CONFIG: replace these with your equirectangular 360 images ------------- */
+const spots = [
+  { id:'netarhat', name:'Netarhat', coords:[23.471,84.267], thumb:'nethratJharkhand-thumb.jpg', img360:'netarhat-360.jpg', desc:'Netarhat — hill station famous for sunrise.', link:'/destinations/netarhat' },
+  { id:'betla', name:'Betla National Park', coords:[23.847,84.217], thumb:'betla-thumb.jpg', img360:'betla-360.jpg', desc:'Betla — wildlife safaris.', link:'/destinations/betla' },
+  { id:'hundru', name:'Hundru Falls', coords:[23.369,85.415], thumb:'hundru-thumb.jpg', img360:'hundru-360.jpg', desc:'Hundru Falls — dramatic waterfall.', link:'/destinations/hundru-falls' },
+  { id:'deoghar', name:'Deoghar', coords:[24.48,86.7], thumb:'deoghar-thumb.jpg', img360:'deoghar-360.jpg', desc:'Deoghar — pilgrimage hub.', link:'/destinations/deoghar' }
+];
+/* ------------------------------------------------------------------------------------- */
 
-    // Initialize Leaflet map
-    const map = L.map('map').setView([23.6,85.3], 7);
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution:'© OpenStreetMap' }).addTo(map);
+const map = L.map('map').setView([23.6,85.3],7);
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{ attribution:'© OpenStreetMap' }).addTo(map);
 
-    // create markers and bind click -> open 360 viewer
-    spots.forEach(spot => {
-      const marker = L.marker(spot.coords).addTo(map);
-      marker.bindPopup(`<strong>${spot.name}</strong><br/><button data-id="${spot.id}" class="open360">View 360°</button>`);
-      // When popup opens, hook the button click
-      marker.on('popupopen', (e) => {
-        const btn = document.querySelector('.open360[data-id="' + spot.id + '"]');
-        if (btn) {
-          btn.addEventListener('click', () => openViewer(spot.id));
-        }
-      });
-      // also allow clicking marker directly to open viewer
-      marker.on('click', () => openViewer(spot.id));
-    });
+const markers = {};
+spots.forEach(spot=>{
+  const m = L.marker(spot.coords).addTo(map);
+  m.bindPopup(`<strong>${spot.name}</strong><br/><button data-id="${spot.id}" class="open360">View 360°</button>`);
+  m.on('popupopen',()=> {
+    const btn = document.querySelector(`.open360[data-id="${spot.id}"]`);
+    if(btn) btn.addEventListener('click', ()=> loadSpot(spot.id));
+  });
+  m.on('click', ()=> loadSpot(spot.id)); // clicking marker opens panorama too
+  markers[spot.id] = m;
+});
 
-    // Viewer elements
-    const viewer = document.getElementById('viewer');
-    const viewerTitle = document.getElementById('viewerTitle');
-    const viewerDesc = document.getElementById('viewerDesc');
-    const viewerSky = document.getElementById('viewerSky');
-    const aframeViewer = document.getElementById('aframeViewer');
-    const closeBtn = document.getElementById('closeViewer');
-    const enterVrBtn = document.getElementById('enterVr');
+// UI elements
+const sky = document.getElementById('sky');
+const vTitle = document.getElementById('vTitle');
+const vDesc = document.getElementById('vDesc');
+const vLink = document.getElementById('vLink');
+const thumbs = document.getElementById('thumbs');
+const loader = document.getElementById('loader');
+const errBox = document.getElementById('err');
+const enterVrBtn = document.getElementById('enterVr');
+const arInfoBtn = document.getElementById('arInfo');
+const sceneEl = document.getElementById('scene');
 
-    // open viewer by id
-    function openViewer(id) {
-      const spot = spots.find(s => s.id === id);
-      if (!spot) return;
-      // set UI
-      viewerTitle.textContent = `360°: ${spot.name}`;
-      viewerDesc.textContent = spot.desc + (spot.link ? ` · More: ${spot.link}` : '');
-      // set sky src (A-Frame will update texture)
-      viewerSky.setAttribute('src', spot.img360);
+// build thumbnails
+spots.forEach(s=>{
+  const img = document.createElement('img');
+  img.className='thumb';
+  img.src = s.thumb;
+  img.alt = s.name;
+  img.title = s.name;
+  img.dataset.id = s.id;
+  img.addEventListener('click', ()=> loadSpot(s.id));
+  thumbs.appendChild(img);
+});
 
-      // show modal
-      viewer.style.display = 'flex';
-      viewer.setAttribute('aria-hidden', 'false');
+// helper: show loader / error
+function showLoader(show){ loader.style.display = show ? 'block':'none'; errBox.style.display='none'; }
+function showError(msg){ errBox.textContent = msg || 'Image failed to load — check file/URL.'; errBox.style.display='block'; loader.style.display='none'; }
 
-      // set focus for accessibility
-      // try to center map on spot
-      map.setView(spot.coords, 9, { animate:true });
-    }
+// load & validate 360 image before assigning to sky to avoid black screen
+function loadSpot(id){
+  const spot = spots.find(s=>s.id===id);
+  if(!spot) return;
+  vTitle.textContent = `360°: ${spot.name}`;
+  vDesc.textContent = spot.desc;
+  vLink.href = spot.link || '#';
+  setActiveThumb(id);
 
-    // close viewer
-    function closeViewer() {
-      viewer.style.display = 'none';
-      viewer.setAttribute('aria-hidden', 'true');
-      // optionally clear sky to free GPU memory
-      viewerSky.setAttribute('src', '');
-      // return focus to map container
-      document.getElementById('map').focus();
-    }
+  // show loader
+  showLoader(true);
 
-    closeBtn.addEventListener('click', closeViewer);
+  // preload image then assign to sky
+  const img = new Image();
+  img.crossOrigin = 'anonymous'; // helps if image has CORS headers
+  img.onload = function(){
+    // success: set sky src to image URL (A-Frame will use it)
+    sky.setAttribute('src', spot.img360);
+    showLoader(false);
+    errBox.style.display = 'none';
+    // center map + popup
+    map.setView(spot.coords, 9, { animate:true });
+    const m = markers[id]; if(m) m.openPopup();
+  };
+  img.onerror = function(e){
+    console.error('360 image load error for', spot.img360, e);
+    showError('Could not load 360 image: ' + spot.img360);
+    // fallback: set a mild gradient as sky to avoid black
+    sky.removeAttribute('src');
+    sky.setAttribute('color','#0b0b0b');
+  };
+  // start loading
+  img.src = spot.img360;
+}
 
-    // Enter VR fallback (tries to request VR via A-Frame)
-    enterVrBtn.addEventListener('click', () => {
-      if (aframeViewer && typeof aframeViewer.enterVR === 'function') {
-        aframeViewer.enterVR();
-      } else {
-        alert('VR not available on this device/browser. Use a WebXR-enabled browser or the VR icon inside the scene.');
-      }
-    });
+// set active thumb style
+function setActiveThumb(id){
+  document.querySelectorAll('.thumb').forEach(t=> t.classList.toggle('active', t.dataset.id===id));
+}
 
-    // keyboard ESC to close
-    window.addEventListener('keydown', e => {
-      if (e.key === 'Escape' && viewer.style.display === 'flex') closeViewer();
-      // optional: 1..9 quick keys to open spots
-      if (e.key >= '1' && e.key <= String(Math.min(9, spots.length))) {
-        const idx = Number(e.key) - 1;
-        openViewer(spots[idx].id);
-      }
-    });
+// initial: try to load the first spot (will show loader until image ready)
+loadSpot(spots[2].id); // Hundru by default
 
-    // Accessibility: close when clicking backdrop
-    viewer.addEventListener('click', (ev) => {
-      if (ev.target === viewer) closeViewer();
-    });
+/* ---------- VR & AR capability detection ---------- */
 
-    // Preload 360 images (optional) to reduce load lag — careful with bandwidth
-    function preloadImages(list) {
-      list.forEach(url => {
-        const img = new Image();
-        img.src = url;
-      });
-    }
-    preloadImages(spots.map(s => s.img360));
-  </script>
+// VR: enable Enter VR button only if immersive-vr supported
+async function updateVrButton() {
+  let supported = false;
+  if (navigator.xr && navigator.xr.isSessionSupported) {
+    try { supported = await navigator.xr.isSessionSupported('immersive-vr'); } catch(e){}
+  }
+  // fallback: enable if scene.enterVR exists (A-Frame)
+  if(!supported && sceneEl && typeof sceneEl.enterVR === 'function') supported = true;
+  enterVrBtn.disabled = !supported;
+  enterVrBtn.title = supported ? 'Enter VR' : 'VR not available';
+}
+updateVrButton();
 
+enterVrBtn.addEventListener('click', ()=>{
+  // try to enter VR via A-Frame scene
+  if(sceneEl && typeof sceneEl.enterVR === 'function') {
+    try { sceneEl.enterVR(); } catch(e){ alert('Could not enter VR: ' + e); }
+  } else {
+    alert('VR not available on this device/browser.');
+  }
+});
+
+// AR Info: show short guidance (real AR needs device & HTTPS & WebXR AR support)
+arInfoBtn.addEventListener('click', ()=>{
+  const arMsg = `AR note:
+• Markerless AR (place the place in your room) requires a WebXR AR-capable device (Android Chrome with WebXR AR, or headset with AR).
+• You must host images/models over HTTPS.
+• For a simple AR experience we can add a small 3D model viewer (GLTF) or use WebXR hit-test — tell me if you want that and I’ll add it.`;
+  alert(arMsg);
+});
+
+/* ---------- Helpful debug / guidance for you ---------- */
+console.log('Map+360 viewer loaded. If the right panel is black, check that the 360 files exist at the specified paths and are equirectangular images.');
+
+</script>
 </body>
 </html>
