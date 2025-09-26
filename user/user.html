@@ -1,0 +1,571 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Discover Jharkhand — Community</title>
+<style>
+  :root{
+    --bg:#f6fbf6;
+    --card:#ffffff;
+    --emerald-900:#064e3b;
+    --emerald-700:#0f766e;
+    --emerald-600:#10b981;
+    --emerald-50:#ecfdf5;
+    --muted:#6b7280;
+    --glass: rgba(255,255,255,0.7);
+    --shadow: 0 8px 20px rgba(7,15,11,0.08);
+    font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+  }
+
+  html,body{height:100%}
+  body{
+    margin:0;
+    background:linear-gradient(180deg,var(--bg),#fff);
+    color:var(--emerald-900);
+    -webkit-font-smoothing:antialiased;
+    -moz-osx-font-smoothing:grayscale;
+    padding:28px;
+  }
+
+  .container{max-width:1200px;margin:0 auto;}
+
+  header{display:flex;gap:16px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+  .brand{display:flex;flex-direction:column;}
+  .brand h1{margin:0;font-size:26px;letter-spacing:-0.2px}
+  .brand p{margin:6px 0 0;color:var(--emerald-700);font-size:13px}
+
+  .controls{display:flex;gap:10px;align-items:center}
+  .btn{
+    border:0;background:var(--emerald-600);color:#fff;padding:10px 14px;border-radius:999px;
+    box-shadow:var(--shadow);cursor:pointer;font-weight:600;font-size:14px;
+  }
+  .btn.secondary{background:transparent;color:var(--emerald-700);border:1px solid rgba(15,118,110,0.08);box-shadow:none}
+  .btn.small{padding:8px 10px;font-size:13px}
+
+  main{display:grid;grid-template-columns:1fr 320px;gap:22px;margin-top:22px}
+  @media (max-width:900px){ main{grid-template-columns:1fr} .sidebar{order:2} .posts{order:1} }
+
+  /* posts grid */
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:18px}
+  .card{
+    background:var(--card);border-radius:16px;overflow:hidden;box-shadow:var(--shadow);display:flex;flex-direction:column;
+    transition:transform .18s ease,box-shadow .18s ease;
+  }
+  .card:hover{transform:translateY(-6px)}
+  .card .media{height:170px;background:#eee;object-fit:cover;width:100%;display:block}
+  .card .meta{padding:12px 14px 14px}
+  .tag{position:absolute;left:12px;top:12px;background:var(--glass);padding:6px 10px;border-radius:999px;font-size:12px;color:var(--emerald-700);backdrop-filter: blur(6px);}
+
+  .title{font-weight:700;color:var(--emerald-900);margin:4px 0 6px;font-size:16px}
+  .sub{font-size:13px;color:var(--muted)}
+
+  .card .actions{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;border-top:1px solid #f1f5f4}
+  .action-group{display:flex;align-items:center;gap:8px}
+  .icon-btn{background:transparent;border:0;color:var(--emerald-700);cursor:pointer;font-weight:600;display:inline-flex;align-items:center;gap:8px}
+
+  /* sidebar */
+  .sidebar .panel{background:var(--card);padding:14px;border-radius:12px;box-shadow:var(--shadow);margin-bottom:14px}
+  .pill{display:inline-block;padding:6px 10px;border-radius:999px;background:var(--emerald-50);color:var(--emerald-700);font-weight:600;margin:5px 6px 0 0;font-size:13px}
+
+  /* modal */
+  .modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,0.45);display:flex;align-items:center;justify-content:center;z-index:60;padding:22px}
+  .modal{width:100%;max-width:980px;background:var(--card);border-radius:14px;overflow:hidden;display:flex;gap:16px;box-shadow:0 30px 80px rgba(7,15,11,0.18)}
+  .modal .left{flex:1}
+  .modal img{width:100%;height:420px;object-fit:cover;display:block}
+  .modal .right{width:420px;padding:16px;display:flex;flex-direction:column}
+  .comment-list{margin-top:10px;overflow:auto;max-height:280px;padding-right:8px;display:flex;flex-direction:column;gap:10px}
+  .comment{background:var(--emerald-50);padding:10px;border-radius:8px;font-size:14px;color:var(--emerald-900)}
+
+  .form-row{display:flex;gap:8px;margin-top:10px}
+  .input,textarea{width:100%;padding:10px;border-radius:8px;border:1px solid #e6f2ec;background:transparent;font-size:14px}
+  textarea{resize:vertical;min-height:70px}
+
+  /* camera overlay */
+  .camera-backdrop{position:fixed;inset:0;background:rgba(0,0,0,0.6);display:flex;align-items:center;justify-content:center;z-index:70;padding:20px}
+  .camera-box{width:100%;max-width:720px;background:var(--card);border-radius:12px;padding:14px;box-shadow:var(--shadow);display:flex;flex-direction:column;gap:10px}
+  video{width:100%;height:380px;border-radius:8px;background:#000;object-fit:cover}
+
+  /* little helpers */
+  .center{display:flex;align-items:center;justify-content:center}
+  .muted{color:var(--muted)}
+  .small{font-size:13px}
+  .ghost{background:transparent;border:1px solid rgba(7,15,11,0.04);padding:10px;border-radius:10px}
+
+  footer{text-align:center;color:var(--muted);font-size:13px;margin-top:28px}
+</style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="brand">
+        <h1>Discover Jharkhand</h1>
+        <p>Community moments — share experiences from Ranchi, Netarhat, Parasnath & more</p>
+      </div>
+
+      <div class="controls">
+        <button id="openCameraBtn" class="btn" title="Open camera to capture a moment">📸 Capture</button>
+        <button id="uploadBtn" class="btn secondary small" title="Upload an image from your device">📁 Upload</button>
+        <input id="fileInput" type="file" accept="image/*" style="display:none" />
+        <button id="loadMoreBtn" class="btn secondary small">Load more</button>
+      </div>
+    </header>
+
+    <main>
+      <section class="posts">
+        <div id="postsGrid" class="grid" aria-live="polite"></div>
+        <div style="margin-top:18px;text-align:center">
+          <button id="loadMoreBtn2" class="btn small secondary">Load more posts</button>
+        </div>
+      </section>
+
+      <aside class="sidebar">
+        <div class="panel">
+          <h3 style="margin:0 0 8px">Explore</h3>
+          <p class="small muted" style="margin:0">Quick filters for Jharkhand hotspots</p>
+          <div style="margin-top:10px">
+            <span class="pill">Ranchi</span><span class="pill">Netarhat</span><span class="pill">Parasnath</span><span class="pill">Hundru Falls</span>
+          </div>
+        </div>
+
+        <div class="panel">
+          <h4 style="margin:0 0 8px">Community Highlights</h4>
+          <div id="highlights" class="small muted">Loading...</div>
+        </div>
+
+        <div class="panel">
+          <h4 style="margin:0 0 8px">Top Places</h4>
+          <ol style="margin:0 0 0 18px;padding:0" class="small muted">
+            <li>Hundru Falls</li>
+            <li>Netarhat</li>
+            <li>Parasnath</li>
+            <li>Ranchi Market</li>
+          </ol>
+        </div>
+      </aside>
+    </main>
+
+    <footer>Built for Jharkhand travelers • frontend-only demo • comments saved locally</footer>
+  </div>
+
+  <!-- Modal template -->
+  <template id="modalTpl">
+    <div class="modal-backdrop" role="dialog" aria-modal="true">
+      <div class="modal" role="document">
+        <div class="left">
+          <img src="" alt="">
+        </div>
+        <div class="right">
+          <div style="display:flex;justify-content:space-between;align-items:center">
+            <div>
+              <div class="small muted" id="modalPlaceLocation">Jharkhand</div>
+              <h3 id="modalTitle" style="margin:6px 0 0"></h3>
+              <div class="small muted" id="modalAuthor"></div>
+            </div>
+            <div style="display:flex;flex-direction:column;align-items:flex-end;gap:8px">
+              <button id="modalLike" class="btn small">Like</button>
+              <button id="modalClose" class="btn small secondary">Close</button>
+            </div>
+          </div>
+
+          <div style="margin-top:12px">
+            <h4 style="margin:0">Experiences</h4>
+            <div class="comment-list" id="modalComments"></div>
+
+            <form id="commentForm" style="margin-top:12px">
+              <input id="commentName" class="input" placeholder="Your name (optional)" />
+              <textarea id="commentText" class="input" placeholder="Share what you felt..." rows="3"></textarea>
+              <div style="display:flex;justify-content:flex-end;margin-top:8px">
+                <button class="btn small" type="submit">Post</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </template>
+
+  <!-- Camera template -->
+  <template id="cameraTpl">
+    <div class="camera-backdrop">
+      <div class="camera-box">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <strong style="color:var(--emerald-800)">Camera</strong>
+          <div>
+            <button id="cameraClose" class="btn small secondary">Close</button>
+          </div>
+        </div>
+
+        <video id="cameraVideo" autoplay playsinline></video>
+
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <div class="small muted">Tip: allow camera permissions</div>
+          <div>
+            <button id="captureBtn" class="btn">Capture & Share</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </template>
+
+<script>
+/* ===============================
+   Frontend-only app: posts, camera, comments, + file upload
+   Data persisted in localStorage under "jh_posts_v1"
+   Initial images are neutral inline SVG placeholders (no external pics)
+   =============================== */
+
+const placeholderSVG = encodeURIComponent(`<svg xmlns='http://www.w3.org/2000/svg' width='1200' height='900'><rect fill='%23eafaf0' width='100%' height='100%'/><g><circle cx='200' cy='220' r='140' fill='%2310b981' opacity='0.14'/><rect x='260' y='420' width='720' height='220' rx='14' fill='%2310b981' opacity='0.06'/></g><text x='50%' y='52%' dominant-baseline='middle' text-anchor='middle' font-size='48' fill='%230a6f53' font-family='Arial,Helvetica,sans-serif'>Jharkhand</text></svg>`);
+const placeholderDataUrl = `data:image/svg+xml;utf8,${placeholderSVG}`;
+
+const samplePosts = [
+  {
+    id: 'p1',
+    title: 'Hundru Falls Sunrise',
+    author: 'Priya',
+    time: '2 days ago',
+    img: 'user1.jpg',
+    likes: 324,
+    comments: [
+      { id: 'c11', author: 'Rajan', text: 'Thundering falls — must visit in monsoon!' },
+      { id: 'c12', author: 'Meera', text: 'Pack light and catch the sunrise.' }
+    ]
+  },
+  {
+    id: 'p2',
+    title: 'Netarhat Misty Trails',
+    author: 'Ankit',
+    time: '5 days ago',
+    img: 'mistyTrails.jpg',
+    likes: 211,
+    comments: [{ id: 'c21', author: 'Sita', text: 'Perfect for early morning walks.' }]
+  },
+  {
+    id: 'p3',
+    title: 'Parasnath Pilgrim Walk',
+    author: 'Ravi',
+    time: '1 week ago',
+   img: 'pilgrim.jpg',
+    likes: 156,
+    comments: [{ id: 'c31', author: 'Geeta', text: 'Spiritual and serene — carry water.' }]
+  },
+  {
+    id: 'p4',
+    title: 'Ranchi Market Bites',
+    author: 'Neha',
+    time: '3 days ago',
+    img: 'https://upload.wikimedia.org/wikipedia/commons/8/8c/Ranchi_market.jpg',
+    likes: 98,
+    comments: [{ id: 'c41', author: 'Aman', text: 'Try the litti chokha stall near the market.' }]
+  }
+];
+
+const STORAGE_KEY = 'jh_posts_v1';
+
+function loadPosts() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(samplePosts));
+      return samplePosts.slice();
+    }
+    return JSON.parse(raw);
+  } catch (e) {
+    console.error(e);
+    return samplePosts.slice();
+  }
+}
+
+function savePosts(posts) {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(posts));
+}
+
+/* ---- render ---- */
+const postsGrid = document.getElementById('postsGrid');
+const highlights = document.getElementById('highlights');
+
+let posts = loadPosts();
+renderGrid();
+
+function renderGrid() {
+  postsGrid.innerHTML = '';
+  for (const p of posts) {
+    const card = document.createElement('article');
+    card.className = 'card';
+    card.innerHTML = `
+      <div style="position:relative">
+        <img class="media" src="${escapeHtml(p.img)}" alt="${escapeHtml(p.title)}" />
+        <div class="tag">Jharkhand</div>
+      </div>
+      <div class="meta">
+        <div class="title">${escapeHtml(p.title)}</div>
+        <div class="sub">by ${escapeHtml(p.author)} • ${escapeHtml(p.time)}</div>
+        <p class="small muted" style="margin-top:8px">${escapeHtml(p.comments?.[0]?.text ?? 'Share your experience visiting this place.')}</p>
+      </div>
+      <div class="actions">
+        <div class="action-group">
+          <button class="icon-btn" data-like="${p.id}">❤️ <span class="small">${p.likes}</span></button>
+          <button class="icon-btn" data-open="${p.id}">💬 Comments (${p.comments.length})</button>
+        </div>
+        <div class="action-group">
+          <button class="icon-btn ghost" data-save="${p.id}">Save</button>
+        </div>
+      </div>
+    `;
+    postsGrid.appendChild(card);
+  }
+
+  // update highlights
+  highlights.innerHTML = posts.slice(0,4).map(p => `<div style="margin-bottom:8px"><strong>${escapeHtml(p.author)}</strong><div class="small muted">${escapeHtml(p.comments?.[0]?.text ?? 'Shared a moment')}</div></div>`).join('');
+}
+
+/* ---- events: like, open post, load more ---- */
+document.body.addEventListener('click', (ev) => {
+  const likeBtn = ev.target.closest('[data-like]');
+  if (likeBtn) {
+    const id = likeBtn.getAttribute('data-like');
+    likePost(id);
+    return;
+  }
+  const openBtn = ev.target.closest('[data-open]');
+  if (openBtn) {
+    const id = openBtn.getAttribute('data-open');
+    openModalFor(id);
+    return;
+  }
+  const saveBtn = ev.target.closest('[data-save]');
+  if (saveBtn) {
+    alert('Saved to your bookmarks (demo only).');
+    return;
+  }
+});
+
+function likePost(id){
+  posts = posts.map(p => p.id === id ? {...p, likes: (p.likes || 0) + 1} : p);
+  savePosts(posts);
+  renderGrid();
+}
+
+/* ---- modal handling ---- */
+let currentModal = null;
+
+function openModalFor(id){
+  const post = posts.find(p => p.id === id);
+  if (!post) return;
+  const tpl = document.getElementById('modalTpl');
+  const clone = tpl.content.cloneNode(true);
+  const backdrop = clone.querySelector('.modal-backdrop');
+  const modalImg = clone.querySelector('.left img');
+  const title = clone.getElementById('modalTitle');
+  const author = clone.getElementById('modalAuthor');
+  const commentsBox = clone.getElementById('modalComments');
+  const likeBtn = clone.getElementById('modalLike');
+  const closeBtn = clone.getElementById('modalClose');
+  const commentForm = clone.getElementById('commentForm');
+
+  modalImg.src = post.img;
+  modalImg.alt = post.title;
+  title.textContent = post.title;
+  author.textContent = `by ${post.author} • ${post.time}`;
+  commentsBox.innerHTML = '';
+  for (const c of post.comments || []) {
+    const el = document.createElement('div');
+    el.className = 'comment';
+    el.innerHTML = `<strong style="color:var(--emerald-800)">${escapeHtml(c.author)}</strong><div style="margin-top:6px">${escapeHtml(c.text)}</div>`;
+    commentsBox.appendChild(el);
+  }
+  // like handler
+  likeBtn.textContent = `Like (${post.likes || 0})`;
+  likeBtn.addEventListener('click', () => {
+    likePost(post.id);
+    likeBtn.textContent = `Like (${(posts.find(x=>x.id===post.id)||{}).likes || 0})`;
+  });
+
+  // comment submit
+  commentForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const name = commentForm.querySelector('#commentName').value.trim() || 'Visitor';
+    const text = commentForm.querySelector('#commentText').value.trim();
+    if (!text) return alert('Please write something about your experience.');
+    const newComment = { id: 'c' + Date.now(), author: name, text };
+    posts = posts.map(p => p.id === post.id ? {...p, comments: [...(p.comments||[]), newComment]} : p);
+    savePosts(posts);
+    // append to UI immediately
+    const el = document.createElement('div');
+    el.className = 'comment';
+    el.innerHTML = `<strong style="color:var(--emerald-800)">${escapeHtml(newComment.author)}</strong><div style="margin-top:6px">${escapeHtml(newComment.text)}</div>`;
+    commentsBox.appendChild(el);
+    commentForm.reset();
+    // update grid counts
+    renderGrid();
+  });
+
+  closeBtn.addEventListener('click', closeModal);
+  backdrop.addEventListener('click', (ev) => { if (ev.target === backdrop) closeModal(); });
+
+  document.body.appendChild(backdrop);
+  currentModal = backdrop;
+  document.addEventListener('keydown', escClose);
+}
+
+function closeModal(){
+  if (!currentModal) return;
+  currentModal.remove();
+  currentModal = null;
+  document.removeEventListener('keydown', escClose);
+}
+
+function escClose(e){ if (e.key === 'Escape') closeModal(); }
+
+/* ---- camera ---- */
+let stream = null;
+const openCameraBtn = document.getElementById('openCameraBtn');
+openCameraBtn.addEventListener('click', openCameraFlow);
+
+function openCameraFlow(){
+  const tpl = document.getElementById('cameraTpl');
+  const clone = tpl.content.cloneNode(true);
+  const backdrop = clone.querySelector('.camera-backdrop');
+  const video = clone.querySelector('#cameraVideo');
+  const closeBtn = clone.querySelector('#cameraClose');
+  const captureBtn = clone.querySelector('#captureBtn');
+
+  // request camera
+  navigator.mediaDevices && navigator.mediaDevices.getUserMedia
+    ? navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' }, audio: false })
+      .then(s => {
+        stream = s;
+        video.srcObject = s;
+        video.play().catch(()=>{});
+      })
+      .catch(err => {
+        alert('Unable to access camera. Check permissions or try a secure (https) context.');
+        console.error(err);
+      })
+    : alert('Camera not supported on this device/browser.');
+
+  // capture handler
+  captureBtn.addEventListener('click', () => {
+    captureFromVideo(video);
+    closeCameraOverlay();
+  });
+
+  closeBtn.addEventListener('click', () => {
+    closeCameraOverlay();
+  });
+
+  backdrop.addEventListener('click', (ev) => { if (ev.target === backdrop) closeCameraOverlay(); });
+
+  document.body.appendChild(backdrop);
+  function closeCameraOverlay(){
+    if (stream) { stream.getTracks().forEach(t=>t.stop()); stream=null; }
+    backdrop.remove();
+  }
+}
+
+/* capture and add post */
+function captureFromVideo(video){
+  try {
+    const canvas = document.createElement('canvas');
+    canvas.width = video.videoWidth || 1280;
+    canvas.height = video.videoHeight || 720;
+    const ctx = canvas.getContext('2d');
+    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+    const dataUrl = canvas.toDataURL('image/jpeg', 0.9);
+    const newPost = {
+      id: 'p'+Date.now(),
+      title: 'Captured in Jharkhand',
+      author: 'You',
+      time: 'just now',
+      img: dataUrl,
+      likes: 0,
+      comments: []
+    };
+    posts.unshift(newPost);
+    savePosts(posts);
+    renderGrid();
+    // open modal for the new post so user can add comments quickly
+    setTimeout(()=>openModalFor(newPost.id), 400);
+  } catch (e) {
+    console.error(e);
+    alert('Capture failed.');
+  }
+}
+
+/* ---- file upload (new) ---- */
+const uploadBtn = document.getElementById('uploadBtn');
+const fileInput = document.getElementById('fileInput');
+
+uploadBtn.addEventListener('click', () => fileInput.click());
+
+fileInput.addEventListener('change', async (ev) => {
+  const f = ev.target.files && ev.target.files[0];
+  if (!f) return;
+  if (!f.type.startsWith('image/')) {
+    alert('Please select an image file.');
+    return;
+  }
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    const dataUrl = e.target.result;
+    const newPost = {
+      id: 'p'+Date.now(),
+      title: 'Uploaded from device',
+      author: 'You',
+      time: 'just now',
+      img: dataUrl,
+      likes: 0,
+      comments: []
+    };
+    posts.unshift(newPost);
+    savePosts(posts);
+    renderGrid();
+    // open modal for the new post
+    setTimeout(()=>openModalFor(newPost.id), 300);
+    // clear input so same file can be re-uploaded if needed
+    fileInput.value = '';
+  };
+  reader.onerror = function(err) {
+    console.error(err);
+    alert('Failed to read file.');
+  };
+  reader.readAsDataURL(f);
+});
+
+/* ---- load more simulation ---- */
+document.getElementById('loadMoreBtn').addEventListener('click', simulateLoadMore);
+document.getElementById('loadMoreBtn2').addEventListener('click', simulateLoadMore);
+
+function simulateLoadMore(){
+  const next = [
+    {
+      id: 'p'+Date.now() + 'a',
+      title: 'Hidden Trail ' + (Math.floor(Math.random()*100)),
+      author: 'Local',
+      time: 'a few days ago',
+      img: placeholderDataUrl,
+      likes: Math.floor(Math.random()*200),
+      comments: []
+    },
+    {
+      id: 'p'+(Date.now()+1) + 'b',
+      title: 'Hillview ' + (Math.floor(Math.random()*100)),
+      author: 'Traveler',
+      time: 'a week ago',
+      img: placeholderDataUrl,
+      likes: Math.floor(Math.random()*200),
+      comments: []
+    }
+  ];
+  posts = posts.concat(next);
+  savePosts(posts);
+  renderGrid();
+  window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+}
+
+/* small util */
+function escapeHtml(s=''){return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":"&#39;"}[c]));}
+
+</script>
+</body>
+</html>
