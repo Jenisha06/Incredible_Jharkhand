@@ -218,13 +218,19 @@
 const placeholderSVG = encodeURIComponent(`<svg xmlns='http://www.w3.org/2000/svg' width='1200' height='900'><rect fill='%23eafaf0' width='100%' height='100%'/><g><circle cx='200' cy='220' r='140' fill='%2310b981' opacity='0.14'/><rect x='260' y='420' width='720' height='220' rx='14' fill='%2310b981' opacity='0.06'/></g><text x='50%' y='52%' dominant-baseline='middle' text-anchor='middle' font-size='48' fill='%230a6f53' font-family='Arial,Helvetica,sans-serif'>Jharkhand</text></svg>`);
 const placeholderDataUrl = `data:image/svg+xml;utf8,${placeholderSVG}`;
 
+/* NOTE:
+   This file is intended to live in the `user/` folder of your repo.
+   Image files such as user1.jpg, mistyTrails.jpg, pilgrim.jpg, market.jpg
+   should also be present in the same `user/` folder.
+*/
+
 const samplePosts = [
   {
     id: 'p1',
     title: 'Hundru Falls Sunrise',
     author: 'Priya',
     time: '2 days ago',
-    img: 'user/user1.jpg',
+    img: 'user1.jpg',
     likes: 324,
     comments: [
       { id: 'c11', author: 'Rajan', text: 'Thundering falls — must visit in monsoon!' },
@@ -236,7 +242,7 @@ const samplePosts = [
     title: 'Netarhat Misty Trails',
     author: 'Ankit',
     time: '5 days ago',
-    img: 'user/mistyTrails.jpg',
+    img: 'mistyTrails.jpg',
     likes: 211,
     comments: [{ id: 'c21', author: 'Sita', text: 'Perfect for early morning walks.' }]
   },
@@ -245,7 +251,7 @@ const samplePosts = [
     title: 'Parasnath Pilgrim Walk',
     author: 'Ravi',
     time: '1 week ago',
-   img: 'user/pilgrim.jpg',
+    img: 'pilgrim.jpg',
     likes: 156,
     comments: [{ id: 'c31', author: 'Geeta', text: 'Spiritual and serene — carry water.' }]
   },
@@ -254,7 +260,7 @@ const samplePosts = [
     title: 'Ranchi Market Bites',
     author: 'Neha',
     time: '3 days ago',
-    img: 'user/market.jpg',
+    img: 'market.jpg',
     likes: 98,
     comments: [{ id: 'c41', author: 'Aman', text: 'Try the litti chokha stall near the market.' }]
   }
@@ -294,7 +300,8 @@ function renderGrid() {
     card.className = 'card';
     card.innerHTML = `
       <div style="position:relative">
-        <img class="media" src="${escapeHtml(p.img)}" alt="${escapeHtml(p.title)}" />
+        <img class="media" src="${escapeHtml(p.img)}" alt="${escapeHtml(p.title)}"
+             onerror="this.onerror=null; this.src='${placeholderDataUrl}';" />
         <div class="tag">Jharkhand</div>
       </div>
       <div class="meta">
@@ -363,8 +370,11 @@ function openModalFor(id){
   const closeBtn = clone.getElementById('modalClose');
   const commentForm = clone.getElementById('commentForm');
 
+  // set modal image and fallback if it fails to load
   modalImg.src = post.img;
   modalImg.alt = post.title;
+  modalImg.onerror = function() { this.onerror = null; this.src = placeholderDataUrl; };
+
   title.textContent = post.title;
   author.textContent = `by ${post.author} • ${post.time}`;
   commentsBox.innerHTML = '';
