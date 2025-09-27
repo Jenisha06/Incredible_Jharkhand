@@ -8,11 +8,64 @@
 <body>
 
 
-  <script>
-    function sendSOS() {
-      alert("🚨 Emergency message sent!");
-      // Later you can add actual code here to send a message or redirect
-    }
+<script>
+    // Fixed SOS behaviour
+    document.addEventListener('DOMContentLoaded', () => {
+      const sosLink = document.getElementById('sosLink');
+      if (!sosLink) return;
+
+      function buildSmsUrl(number, message) {
+        const isIOS = /iP(hone|od|ad)/.test(navigator.userAgent);
+        const sep = isIOS ? '&' : '?';
+        return sms:${number}${sep}body=${encodeURIComponent(message)};
+      }
+
+      sosLink.addEventListener('click', async (event) => {
+        event.preventDefault();
+        const emergencyNumber = '112'; // change if needed
+        const fallbackMessage = 🚨 SOS! I need help. Location not available. Please call ${emergencyNumber}.;
+
+        if (!('geolocation' in navigator)) {
+          const url = buildSmsUrl(emergencyNumber, fallbackMessage);
+          window.location.href = url;
+          return;
+        }
+
+        try {
+          const pos = await new Promise((resolve, reject) => {
+            navigator.geolocation.getCurrentPosition(resolve, reject, { timeout: 15000 });
+          });
+
+          const lat = pos.coords.latitude.toFixed(6);
+          const lon = pos.coords.longitude.toFixed(6);
+          const mapsUrl = https://www.google.com/maps?q=${lat},${lon};
+          const message = 🚨 SOS! I need help. My location: ${mapsUrl};
+
+          const smsUrl = buildSmsUrl(emergencyNumber, message);
+          window.location.href = smsUrl;
+        } catch (err) {
+          console.warn('Could not get location or open SMS:', err);
+          const smsUrl = buildSmsUrl(emergencyNumber, fallbackMessage);
+
+          try {
+            window.location.href = smsUrl;
+          } catch (e) {
+            const tryMsg = fallbackMessage;
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+              try {
+                await navigator.clipboard.writeText(tryMsg);
+                alert('SOS message copied to clipboard. Paste into your SMS or messaging app and send.');
+              } catch (copyErr) {
+                prompt('Copy and send this message to emergency services / contact:', tryMsg);
+              }
+            } else {
+              prompt('Copy and send this message to emergency services / contact:', tryMsg);
+            }
+          }
+        }
+      });
+    });
   </script>
+
 </body>
 </html>
